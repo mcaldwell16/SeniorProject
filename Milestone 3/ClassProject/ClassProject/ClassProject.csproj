@@ -184,6 +184,7 @@
     <Content Include="App_Data\ClassDB_log.ldf">
       <DependentUpon>ClassDB.mdf</DependentUpon>
     </Content>
+    <Content Include="App_Data\Down.sql" />
     <Content Include="App_Data\Up.sql" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
