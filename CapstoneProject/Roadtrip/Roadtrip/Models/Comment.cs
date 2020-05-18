@@ -18,5 +18,11 @@ namespace Roadtrip.Models
         [DisplayName("Comment")]
         [Required]
         public string Comment1 { get; set; }
+
+        [Required]
+        public string UserName { get; set; }
+        
+        [Required]
+        public string DateS { get; set; }
     }
 }

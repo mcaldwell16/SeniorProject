@@ -60,6 +60,8 @@ namespace Roadtrip.Models
 
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
+
+        
     }
 
     public class RegisterViewModel
@@ -83,6 +85,8 @@ namespace Roadtrip.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+       //public bool captchaValid { get; set; }
     }
 
     public class ResetPasswordViewModel

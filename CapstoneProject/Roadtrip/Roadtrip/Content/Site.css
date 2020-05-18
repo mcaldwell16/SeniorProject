@@ -1,4 +1,61 @@
-﻿#alertboard {
+﻿html, body {
+    height: 100%;
+}
+.mapoverlay1 {
+    width: 88vw;
+    height: 10vh;
+    position: absolute;
+    top: 10vh;
+    left: 5vw;
+    bottom: 0;
+    background-color: rgba(255, 50, 50, 0.0);
+    z-index: 1000;
+    text-align: center;
+    color: white;
+}
+
+.mapoverlay2 {
+    width: 12vw;
+    height: 80vh;
+    position: absolute;
+    top: 20vh;
+    left: 0vw;
+    bottom: 0;
+    background-color: rgba(71,71,71, 0.4);
+    z-index: 1000;
+    text-align: center;
+    color: white;
+}
+
+.mapoverlay3 {
+    width: 20vw;
+    height: 40vh;
+    position: absolute;
+    top: 60vh;
+    left: 78vw;
+    bottom: 0;
+    background-color: rgba(71,71,71, 0.4);
+    z-index: 1000;
+    
+    color: white;
+}
+
+.leaflet-container {
+    background-color: black;
+}
+.marqueeContainer {
+    margin-top: 10px;
+    background: white;
+    width: 60%;
+    margin-left: 20%;
+}
+
+.marqueeClass {
+    margin: 0 auto;
+    display: block;
+}
+
+#alertboard {
     text-align: center;
     font-size: 100px;
     height: 700px;
@@ -8,7 +65,7 @@
     list-style-type: inherit;
     margin: 0;
     padding: 0;
-    width: 60%;
+    width: 100%;
 }
 
     #sortable li {
@@ -71,6 +128,13 @@
     margin: auto;
 }
 
+.socialsidebar {
+    border-style: solid;
+    border-color: darkslateblue;
+    background-color: aquamarine;
+    text-align: center;
+}
+
 .profilepic {
     border: 1px solid #474747;
     max-height: 100px;
@@ -87,7 +151,7 @@
 
 .profileBackground {
     text-align: center;
-    width: 60%;
+    width: 90%;
     height: 650px;
     margin-bottom: 35px;
     padding: 10px;
@@ -252,4 +316,44 @@ textarea {
 
 .twitterHelper {
     padding-top: 4px;
+}
+
+/*
+<---------------------------------------Modal css--------------------------------------->
+*/
+
+.Crater-Lake {
+    background-image: url('/Content/CraterLake.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 250px;
+    width: 100%;
+}
+
+.Mount-Hood {
+    background-image: url(MountHood.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 250px;
+    width: 100%;
+}
+
+.Deschutes {
+    background-image: url(Deschutes.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 250px;
+    width: 100%;
+}
+
+.Hells-Canyon {
+    background-image: url(HellsCanyon.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 250px;
+    width: 100%;
 }

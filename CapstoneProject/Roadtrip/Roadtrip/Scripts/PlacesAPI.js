@@ -1,4 +1,86 @@
 
+function showLikeModal(data) {
+    console.log(data); 
+    $('#modaly').empty();
+    $('#modaly').append('<ul style="margin-left: -20px; margin-right: 20px; margin-top: 15px;" id="likedEstList"></ul>');
+    for (var i = 0; i < data.length; i++) {
+        $('#likedEstList').append(`
+        <li  class="list-group-item list-group-item-dark" class="list-group-item list-group-item-dark" >Name: ${data[i].EstablishmentName} <br /> 
+            User Name: ${data[i].UserName} <br /> 
+           <input id="${data[i].EstablishmentID}" type="button" value="Get Details" onclick="details(this.id)"> 
+
+        <input id="${data[i].EstablishmentID}" type="button" value="Unlike" onclick="unlikeEst(this.id)">
+<br /> </li>
+            
+            
+`);
+    }
+}
+
+function appendLiked() {
+    var source = '/Routes/getLikeEstablishments';
+    $.ajax({
+        type: 'GET',
+        datatype: 'json',
+        url: source,
+        success: showLikeModal,
+        error: errorOnAjax
+    });
+}
+function mainLikeEST(id, name, lat) {
+    var source = '/SavedRoutes/CheckLikeEstablishment?ID=' + id;
+    var my;
+    $.ajax({
+        type: 'POST',
+        datatype: 'json',
+        url: source,
+        success: function (response) {
+            if (response) {
+
+                
+                console.log("Returned True");
+                $(`#${id}`).append(` <input id="${id}" name="${name}" type="button" value="Like" onclick="checkLikeEstablishment(this.id, this.name)">`)
+            }
+            else {
+
+               
+                console.log("returned false");
+                $(`#${id}`).append(`<input name="${id}" type="button"  value="Unlike" onclick="unlikeEst(this.name)">`)
+            }
+        },
+        async: false
+
+    });
+
+   
+}
+
+function unlikeEst(id) {
+    console.log(id);
+    var source = '/SavedRoutes/UnlikeEst?ID=' + id;
+    $.ajax({
+        type: 'POST',
+        datatype: 'json',
+        url: source,
+        success: function (response) {
+           
+            setTimeout(function () { alert("Unliked Succeeded"); }, 500);
+            appendLiked();
+            test(searchedLocations); 
+
+        },
+        error: errorOnAjax
+
+    });
+}
+
+
+$(document).ready(function () {
+    toggleOff("saveButton");
+    toggleOff("alertboard");
+});
+
+
 function toggle(e) {
     var x = document.getElementById(e);
     if (x.style.display === "none") {
@@ -7,20 +89,17 @@ function toggle(e) {
         x.style.display = "none";
     }
 }
+
 function toggleOn(e) {
     var x = document.getElementById(e);
     x.style.display = "block";
 }
-$(document).ready(function () {
-    toggleOff("saveButton");
-    toggleOff("alertboard");
-});
-
 
 function toggleOff(e) {
     var x = document.getElementById(e);
     x.style.display = "none";
 }
+
 
 function saveRoute() {
     if (confirm("Are you sure you want to save this route?")) {
@@ -114,15 +193,63 @@ function test(data) {
     for (var i = 0; i < data.total; i++) {
         searchedLocations = data;
         $('#estList').append(`
-        <li class="list-group-item list-group-item-dark" id="${data.latitude[i]}">${data.name[i]} <br>
-        <input id="${data.id[i]}" type="button" value="Get Details" onclick="details(this.id)">
-                <input id="${data.id[i]}" type="button" value="Add Location" onclick="addName(this.id)">
+
+       
+        <li class="list-group-item list-group-item-dark" id="${data.latitude[i]}">${data.name[i]} </br>
+<div id = "${data.id[i]}"> </div> 
+        <input id="${data.id[i]}" type="button" value="Get Details" onclick="details(this.id)"> </br>
+                <input id="${data.id[i]}" type="button" value="Add Location" onclick="addName(this.id)"> </br>
+ 
+
+       
 
         </li>
 
-
+ 
 `);
+        mainLikeEST(data.id[i], data.name[i], data.latitude[i]);
     }
+}
+function checkLikeEstablishment(ID, Name) {
+
+    var source = '/SavedRoutes/CheckLikeEstablishment?ID=' + ID;
+    $.ajax({
+        type: 'POST',
+        datatype: 'json',
+        url: source,
+        success: function (response) {
+            if (response) {
+                LikeEstablishment(ID, Name);
+                test(searchedLocations); 
+            }
+            else {
+                setTimeout(function () { alert("Already Liked"); }, 400);
+                console.log("ALREADY LIKED"); 
+            }
+        },
+        error: errorOnAjax
+
+    });
+
+}
+
+function LikeEstablishment(data1, data2) {
+    console.log(data1);
+    console.log(data2);
+    var source = '/SavedRoutes/SaveLikeEstablishment?ID=' + data1 + "&ID2=" + data2;
+    $.ajax({
+        type: 'GET',
+        dataType: 'json',
+        url: source,
+        success: showSucc,
+        error: errorOnAjax
+    });
+
+
+
+}
+function showSucc() {
+    console.log("DATA SAVED"); 
 }
 
 function details(id) {
@@ -140,6 +267,7 @@ function details(id) {
 function showDetails(data) {
     console.log(data);
     $('#details').empty();
+    modal.style.display = "block";
     $('#details').append(`<div style="margin-top:50px;margin-bottom:50px;"><img src="${data.image[0]}" style="width:200px;height:150px;"><br> <b>${data.names[0]}</b><br>This business has a rating of ${data.ratings[0]}
     <br> Located at: ${data.addresss[0]}  ${data.citys[0]}, ${data.states[0]} ${data.zipcodes[0]}<br>The phone number for this business is: ${data.phones[0]}
     <input id="${data.id}" type="button" value="MoreDetails" onclick="moreDetails(this.id)">
@@ -158,9 +286,9 @@ var span = document.getElementsByClassName("close")[0];
 
 // When the user clicks the button, open the modal 
 function modalComments(data) {
-    console.log(data.EstablishmentID);
+    console.log(data);
     if (data[0] == null) {
-        $('#modalBody').empty();
+        $('#comments').empty();
         var link = '/Comments/Create/' + data.EstablishmentID;
         modal.style.display = "block";
         $('#createComment').attr("href", link)
@@ -170,11 +298,17 @@ function modalComments(data) {
         console.log(link);
         modal.style.display = "block";
         var length = data.length;
-        $('#modalBody').empty();
+        console.log($('#comments'));
+        $('#comments').empty();
+
         for (var i = 0; i < length; i++) {
-            $('#modalBody').append(`<div class="commentBox">${data[i].Comment1} <div/> <br />`)
+            $('#comments').append(`<div class="commentBox"> 
+                <a href="/Profiles/details/${data[i].UserName}">${data[i].UserName} ${data[i].DateS}<a/>
+                <br/>
+                <div>${data[i].Comment1}<div/> 
+                <div/> <br />`)
         }
-            $('#createComment').attr("href", link)
+           // $('#createComment').attr("href", link)
     }
 }
 
@@ -205,9 +339,14 @@ window.onclick = function (event) {
 /*function addName(id) {
     
     var bool = true; 
+    */
 
-function moreDetails(id) {
+/*function moreDetails(id) {
     var source = '/Routes/GetMoreDetails/' + id;
+=======
+function moreDetails(id) {
+    var source = '/Routes/GetMoreDetails?id=' + id;
+>>>>>>> dev
 
     $.ajax({
         type: 'GET',
@@ -216,13 +355,16 @@ function moreDetails(id) {
         success: showMoreDetails,
         error: errorOnAjax
     });
-}*/
-
+<<<<<<< HEAD
+}
+}
+*/
 function showMoreDetails(data) {
     console.log(data);
+    $('#comments').empty();
     for (var i = 0; i < 3; i++) {
-
-        $('#details').append(`<div style="margin-top:50px;margin-bottom:50px;"><img src="${data.image[i]}" style="width:200px;height:150px;"><br><b>${data.name[i]}</b><br>${data.text[i]}<br><b>This user has a rating of</b> ${data.rating[i]}<br></div>`);
+        
+        $('#comments').append(`<div style="margin-top:50px;margin-bottom:50px;"><img src="${data.image[i]}" style="width:200px;height:150px;"><br><b>${data.name[i]}</b><br>${data.text[i]}<br><b>This user has a rating of</b> ${data.rating[i]}<br></div>`);
     }
 }
 
@@ -238,9 +380,6 @@ function addName(id) {
        
     }
     console.log(bool); 
-
-
-    
     
 
 
@@ -265,6 +404,7 @@ function addName(id) {
         }
         if (selectedLocations.name.length > 1) {
             toggleOn("saveButton");
+            toggleOn("exportButton");
         }
 
 
@@ -355,6 +495,7 @@ function removeElement(elementId) {
             //delete selectedLocations.longitude[i]; 
             if (selectedLocations.name.length < 2) {
                 toggleOff("saveButton");
+                toggleOff("exportButton");
             }
             console.log(selectedLocations);
             plotMap();
@@ -424,7 +565,7 @@ Math.easeInOutQuad = function (t, b, c, d) {
 
 
 function showMap(data) {
-    document.getElementById('searchmap').innerHTML = "<div id='smap' style='width: 100%; height: 100%;'></div>";
+    document.getElementById('searchmap').innerHTML = "<div id='smap' style='height: 100%; background-color: black;'></div>";
     var mymap = L.map('smap').setView([data.latitude[0], data.longitude[0]], 13);
 
 
@@ -433,7 +574,7 @@ function showMap(data) {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
             '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
             'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        id: 'mapbox/streets-v11',
+        id: 'mapbox/dark-v10',
         tileSize: 512,
         zoomOffset: -1
     }).addTo(mymap);
@@ -449,7 +590,7 @@ function showMap(data) {
     }
 
     var group = new L.featureGroup(array);
-    mymap.fitBounds(group.getBounds());
+    mymap.fitBounds(group.getBounds().pad(0.5));
 
 
 }
@@ -486,7 +627,7 @@ function plotMap(data) {
         router: L.Routing.mapbox('pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw')
     }).addTo(mymap);
     control.hide();
-    mymap.fitBounds(group.getBounds());
+    mymap.fitBounds(group.getBounds().pad(0.5));
 }
 
 function getDistance(rwp1, rwp2) {
@@ -749,7 +890,7 @@ function ACS() {
     }).addTo(mymap);
     control.hide();
     var group = new L.featureGroup(array);
-    mymap.fitBounds(group.getBounds());
+    mymap.fitBounds(group.getBounds().pad(0.5));
 }
 
 

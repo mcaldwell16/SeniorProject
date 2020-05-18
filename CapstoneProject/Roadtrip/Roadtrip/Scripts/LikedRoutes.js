@@ -12,6 +12,7 @@ $(document).ready(function () {
         <li class="list-group-item list-group-item-dark" id="${LikedList[i].UserName}">Route Created By:  ${LikedList[i].UserName} <br>
        Route ID:  ${LikedList[i].RouteID} <br>
         <input name="${LikedList[i].RouteID}" type="button" value="Show Route" onclick="direct(this.name)">
+ <input name="${LikedList[i].RouteID}" type="button" value="Unlike" onclick="Unlike(this.name)">
 
         </li>
 
@@ -35,6 +36,28 @@ function direct(data) {
    
     //scrollTo(document.getElementById(data), topPos - 5, 500);
 
+}
+function tell() {
+    location.reload();
+   
+    console.log("Unliked Worked"); 
+}
+
+function Unlike(data) {
+    console.log(data);
+    var source = '/SavedRoutes/Unlike?ID=' + data;
+    $.ajax({
+        type: 'POST',
+        datatype: 'json',
+        url: source,
+        success: tell,
+        error: errorOnAjax
+
+    });
+    alert("Unliked Succeeded"); 
+}
+function errorOnAjax() {
+    console.log("error"); 
 }
 
 function scrollTo(element, to, duration) {

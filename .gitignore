@@ -6,6 +6,8 @@
 Web_Deploy.config
 AppSettingsSecrets.config
 AppConStrings.config
+MailSettings.config
+
 
 /HW1/*
 /HW2/*

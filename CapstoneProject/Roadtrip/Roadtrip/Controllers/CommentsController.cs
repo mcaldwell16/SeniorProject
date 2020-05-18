@@ -40,7 +40,10 @@ namespace Roadtrip.Controllers
         public ActionResult Create(string id)
         {
             Comment model = new Comment();
+            DateTime today = DateTime.Today;
+            model.DateS = today.ToString("MM/dd/yyyy");
             model.EstablishmentID = id;
+            model.UserName = User.Identity.Name;
             return View(model);
         }
 
@@ -49,7 +52,7 @@ namespace Roadtrip.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CommentID,EstablishmentID,Comment1")] Comment comment)
+        public ActionResult Create([Bind(Include = "UserName,CommentID,EstablishmentID,Comment1,DateS")] Comment comment)
         {
             if (ModelState.IsValid)
             {

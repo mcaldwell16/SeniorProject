@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 using Roadtrip.DAL;
 using Roadtrip.Models; 
 
@@ -15,19 +16,22 @@ namespace Roadtrip.Controllers
 
     public struct Route
     {
-
-
         public int SRID { get; set; }
         public string routeName { get; set; } 
-
         public string Username { get; set; }
-
-
         public DateTime Timestamp { get; set; }
         public List<RLocation> Locations { get; set; }
         public string Tag1 { get; set; }
         public string Tag2 { get; set; }
     }
+    public struct MoreInfo
+    {
+        public string RouteName { get; set; }
+        public string UserName { get; set; }
+        public int RouteID { get; set; }
+        public string tag1 { get; set; }
+        public string tag2 { get; set; }
+    };
 
 public struct RLocation
     {
@@ -104,17 +108,38 @@ public struct RLocation
         }
 
         // GET: SavedRoutes
+       
         public ActionResult Index()
         {
             //List<SavedRoute> sr = db.SavedRoutes.OrderByDescending(s => s.Timestamp).ToList();
+            List<MoreInfo> mr = new List<MoreInfo>(); 
+          
+                List<SavedRoute> sr = db.SavedRoutes
+                    .OrderByDescending(s => s.Timestamp)
+                    .ToList();
 
-            List<SavedRoute> sr = db.SavedRoutes
-                .OrderByDescending(s => s.Timestamp)
-                .ToList();
 
-            return View(LoadRoute(sr));
+                List<LikedRoute> lr = db.LikedRoute
+              .Where(s => s.UserName.Contains(User.Identity.Name))
+              .ToList();
+
+            for (int i = 0; i <= lr.Count -1; i++)
+            {
+                for (int j = 0; j <= sr.Count - 1; j++)
+                {
+                    if (lr[i].RouteID == sr[j].SRID)
+                    {
+                        mr.Add(new MoreInfo { RouteName = sr[j].RouteName, UserName = sr[j].Username, RouteID = sr[j].SRID, tag1 = sr[j].Tag1, tag2 = sr[j].Tag2 }); 
+                    }
+                }
+            }
+
+                ViewBag.LikedList = mr;
+
+                return View(LoadRoute(sr));
+          
         }
-
+        
         public ActionResult Saved()
         {
             List<SavedRoute> sr = db.SavedRoutes
@@ -162,12 +187,7 @@ public struct RLocation
             return rls;
         }
 
-
         public Route ParseRoute(string s, DateTime ts, string routeName, int srid, string uName, string tag1, string tag2)
-
-//        public Route ParseRoute(string s, DateTime ts, int SRID, string Username)
-
-
         {
             Route r = new Route();
             r.Locations = new List<RLocation>();
@@ -327,6 +347,52 @@ public struct RLocation
             base.Dispose(disposing);
         }
 
+        public ActionResult Unlike()
+        {
+            string ID1 = Request.QueryString["ID"];
+            int ID = Int32.Parse(ID1);
+            /* List<LikedRoute> sr = db.LikedRoute
+                .Where(s => s.LRID.Equals(ID))
+                .ToList();*/
+            List<LikedRoute> sr = db.LikedRoute
+           .Where(s => s.UserName.Contains(User.Identity.Name))
+
+           .ToList();
+
+           /* foreach (LikedRoute s in sr)
+            {
+                db.LikedRoute.Remove(s);
+                db.SaveChanges();
+            }*/
+            for (int i = 0; i < sr.Count; i++)
+            {
+                if (ID == sr[i].RouteID)
+                {
+                    db.LikedRoute.Remove(sr[i]);
+                    db.SaveChanges(); 
+                }
+            }
+            return Json(true); 
+        }
+        public ActionResult UnlikeEst()
+        {
+            string ID = Request.QueryString["ID"];
+
+            List<LikedEstablishments> le = db.LikedEstablishments
+                .Where(s => s.UserName.Contains(User.Identity.Name)).ToList();
+
+            for (int i = 0; i < le.Count; i++)
+            {
+                if (ID == le[i].EstablishmentID)
+                {
+                    db.LikedEstablishments.Remove(le[i]);
+                    db.SaveChanges(); 
+                }
+            }
+
+            return Json(true); 
+        }
+
         public ActionResult SaveLike()
         {
             string userName = Request.QueryString["userName"];
@@ -334,13 +400,13 @@ public struct RLocation
             int realSRID = Int32.Parse(SRID);
             LikedRoute likeRoute = new LikedRoute();
             likeRoute.RouteID = realSRID;
-            likeRoute.UserName = userName;
+            likeRoute.UserName = User.Identity.Name;
 
             db.LikedRoute.Add(likeRoute);
             
             db.SaveChanges();
 
-            return RedirectToAction("Saved");
+            return Json(true);
         }
 
         public ActionResult CheckLike()
@@ -362,5 +428,51 @@ public struct RLocation
             }
             return Json(true); 
         }
+        public ActionResult CheckLikeEstablishment()
+        {
+            string ID = Request.QueryString["ID"];
+            List<LikedEstablishments> le = db.LikedEstablishments.Where(s => s.UserName
+            .Contains(User.Identity.Name)).ToList(); 
+                
+            for (int i = 0; i < le.Count; i++)
+            {
+                if (ID == le[i].EstablishmentID)
+                {
+                    return Json(false); 
+                }
+            }
+
+            return Json(true); 
+        }
+
+        public ActionResult SaveLikeEstablishment()
+        {
+            string ESTID = Request.QueryString["ID"];
+           
+            string ESTName = Request.QueryString["ID2"];
+            LikedEstablishments likedEstablishments = new LikedEstablishments();
+            likedEstablishments.EstablishmentID = ESTID;
+            likedEstablishments.EstablishmentName = ESTName;
+            likedEstablishments.UserName = User.Identity.Name;
+
+            db.LikedEstablishments.Add(likedEstablishments);
+            db.SaveChanges(); 
+            return Json(true); 
+        }
+        public ActionResult SearchSaved()
+        {
+
+            string ID = Request.QueryString["ID"];
+            List<SavedRoute> sr = db.SavedRoutes.Where(s => s.Route.Contains(ID)).ToList();
+            return new ContentResult
+            {
+                // serialize C# object "commits" to JSON using Newtonsoft.Json.JsonConvert
+                Content = JsonConvert.SerializeObject(LoadRoute(sr)),
+                ContentType = "application/json",
+                ContentEncoding = System.Text.Encoding.UTF8
+            };
+            
+        }
+        
     }
 }

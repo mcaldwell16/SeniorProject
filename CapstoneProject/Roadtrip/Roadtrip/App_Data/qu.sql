@@ -1,2 +1,1 @@
-
-﻿SELECT * FROM SavedRoutes
+SELECT * FROM SavedRoutes

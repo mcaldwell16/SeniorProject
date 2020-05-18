@@ -6,7 +6,10 @@
         var RouteList = @Html.Raw(Json.Encode(Model)); //For javascript object
 
         var loadItems = 3;
-        var paginationPosition = 0;
+    var paginationPosition = 0;
+
+
+
 
 </script>
 
@@ -20,21 +23,84 @@
 @Styles.Render("~/Content/leaflet-routing-machine.css")
 @Scripts.Render("~/Scripts/leaflet-routing-machine.js")
 @Scripts.Render("~/Scripts/SavedRouteIndex.js")
+@Scripts.Render("~/Scripts/GMaps.js")
 
 
 <h2>Routes Index</h2>
+<div class="row">
+    <select id="sortTag" class="form-control">
 
+        <option value="null">All</option>
+        <option value="food">Food</option>
+        <option value="family">Family</option>
+        <option value="Fun">Fun</option>
+        <option value="21plus">21plus</option>
+        <option value="Bars">Bars</option>
+        <option value="Shopping">Shopping</option>
+
+
+    </select>
+    <button type="button" class="btn btn-primary" style="height:60px;" id="Tag" onclick="sortTag()">Sort</button>
+
+    <div class="col-md-2">
+        @Html.Label("Search The Routes For a Specific Establishment")
+    </div>
+    <input class="mx-1" type="text" id="searchItem" style="height:50px" />
+    <button type="button" class="btn btn-primary" data-toggle="modal" style="width:140px; height:60px;" data-target=".bd-example-modal-lg" onclick="searchRoutes()">Search</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" style="width:140px; height:60px; margin-left:10px;" data-target=".bd-example1-modal-lg" onclick="appendLiked()">Liked Establishments</button>
+
+</div>
 <div class="container">
     <div class="row">
         <div id="indexList" class="col-lg-9">
 
         </div>
         <div id="likedList" class="col-lg-3" style="background-color:darkseagreen; border-style: solid; border-color: darkslategrey;">
-            <div style="text-align: center; padding-top: 13vh;">Liked routes coming soon!</div>
+
+            <h2 style="margin-left: 45px;">Liked Routes</h2>
+            <div style="text-align: center; padding-top: 13vh;">
+                <ul>
+                    @foreach (var l in ViewBag.LikedList)
+                    {
+                        <li class="list-group-item list-group-item-dark" style="border:solid; border-color:black;">
+                            UserName:<strong> @l.UserName </strong><br />
+                            Route Name: <strong> @l.RouteName </strong> <br />
+                            Tags: <strong> @l.tag1 | @l.tag2 </strong> <br />
+
+                            <input name="@l.RouteID" type="button" value="Unlike" onclick="Unlike(this.name)"> <br />
+
+                        </li>
+
+                    }
+                </ul>
+            </div>
         </div>
+
     </div>
     <div class="row" style="text-align: center;">
         <input id="loadMore" type="button" value="" onclick="addToIndexList()">
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-5">
+        <!--Modal code for the Search Results-->
+        <div class="modal fade bd-example-modal-lg" style="position:fixed; left:20%;" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div style="background-color:black;" class="modal-content" id="ResultsModal">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <!--Model code for the Liked Establishments to be appended to-->
+        <div class="modal fade bd-example1-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div style="background-color:black;" class="modal-content" id="modaly">
+
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

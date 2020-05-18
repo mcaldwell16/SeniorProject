@@ -16749,7 +16749,7 @@ module.exports = L.Routing = {
 		onAdd: function(map) {
 			var collapsible = this.options.collapsible;
 
-			collapsible = collapsible || (collapsible === undefined && map.getSize().x <= 1200);
+			collapsible = collapsible || (collapsible === undefined && map.getSize().x <= 1900);
 
 			this._container = L.DomUtil.create('div', 'leaflet-routing-container leaflet-bar ' +
 				(!this.options.show ? 'leaflet-routing-container-hide ' : '') +

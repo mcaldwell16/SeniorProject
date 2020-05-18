@@ -54,9 +54,9 @@ namespace Roadtrip
             //   consumerKey: "",
             //   consumerSecret: "");
 
-            //app.UseFacebookAuthentication(
-            //   appId: "",
-            //   appSecret: "");
+            app.UseFacebookAuthentication(
+               appId: "289867945346706",
+               appSecret: "fca872fb379116a554dc97b0ca5e14cd");
 
             //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
             //{

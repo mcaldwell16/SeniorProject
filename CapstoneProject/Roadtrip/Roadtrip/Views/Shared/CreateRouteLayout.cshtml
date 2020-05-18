@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roadtrip</title>
+    @Styles.Render("~/Content/Site.css")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+    @{
+        string truncName = User.Identity.Name;
+        //if (truncName.Length > 0)
+        //{
+        //truncName = truncName.Substring(0, truncName.IndexOf("@"));
+        //}
+    }
+
+
+</head>
+<body style="background-color: black;">
+    <div id="fb-root"></div> <!--for facebook sharing button-->
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v6.0"></script>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark" style="height: 9vh;">
+        <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Index", "Home")">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Create", "Routes")">Create a Route</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Index", "SavedRoutes")">View Routes</a>
+                </li>
+            </ul>
+        </div>
+        <div class="mx-auto order-0">
+            <a class="navbar-brand mx-auto" href="@Url.Action("Index", "Home")">-DIGITAL HIJINKS CAPSTONE-</a>
+        </div>
+        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+
+            @if (Request.IsAuthenticated)
+            {
+                using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "nav navbar-nav ml-auto" }))
+                {
+                    @Html.AntiForgeryToken()
+                    var name = "default.jpg";
+                    string path = Server.MapPath("~/Uploads/");
+                    if (System.IO.File.Exists(path + User.Identity.Name + ".jpeg"))
+                    {
+                        name = User.Identity.Name + ".jpeg?r=" + DateTime.Now.Ticks.ToString();
+                    }
+                    <li class="nav-item">
+                        <div class="nav-link" style="color:rgba(255, 255, 255, 0.5);">Hello, @User.Identity.Name!</div>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/Profiles/Details/@truncName"><img src="~/Uploads/@name" class="profilepic-navbar" /></a>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right" style="z-index: 1500;">
+                            <a class="dropdown-item" href="/Manage/Index">My Account</a>
+                            <a class="dropdown-item" href="/SavedRoutes/Saved">Saved Routes</a>
+                            <a class="dropdown-item" href="/Manage/ChangePassword">Change Password</a>
+                            <a class="dropdown-item" href="/Manage/ChangeUserName">Change UserName</a>
+                            <a class="dropdown-item" href="/Account/Edit">Edit Account</a>
+                            <a class="dropdown-item" href="/Profiles/Details/@truncName">Profile</a>
+                            <a class="dropdown-item disabled" href="#">Settings</a>
+                            <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()">Logout</a>
+                        </div>
+                    </li>
+
+                }
+            }
+            else
+            {
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Register", "Account")">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Login", "Account")">Login</a>
+                    </li>
+                </ul>
+            }
+
+        </div>
+    </nav>
+
+    <div>
+        @RenderBody()
+    </div>
+</body>
+</html>
