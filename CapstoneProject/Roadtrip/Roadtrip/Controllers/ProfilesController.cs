@@ -24,6 +24,40 @@ namespace Roadtrip.Controllers
 
         }
 
+        [Authorize]
+        [HttpGet]
+        public ActionResult Edit()
+        {
+            Profile profile = db.Profiles.FirstOrDefault(s => s.UserName.Equals(User.Identity.Name));
+            return View(profile);
+        }
+
+        [HttpPost]
+        public void SaveImageLink(string id)
+        {
+            Profile profile = db.Profiles.FirstOrDefault(s => s.UserName.Equals(User.Identity.Name));
+            profile.PicLink = id;
+            db.SaveChanges();
+        }
+
+        [HttpGet]
+        public string GetImageLink()
+        {
+            string id = Request.QueryString["id"];
+            Profile profile;
+            if (id == null)
+                profile = db.Profiles.FirstOrDefault(s => s.UserName.Equals(User.Identity.Name));
+            else
+                profile = db.Profiles.FirstOrDefault(s => s.UserName.Equals(id));
+
+            if (profile == null)
+                return "/Uploads/default.jpg";
+
+            if (profile.PicLink == "null")
+                return "/Uploads/default.jpg";
+            else
+                return profile.PicLink;
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -293,36 +327,7 @@ namespace Roadtrip.Controllers
             return View(profile);
         }
 
-        // GET: Profiles/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Profile profile = db.Profiles.Find(id);
-            if (profile == null)
-            {
-                return HttpNotFound();
-            }
-            return View(profile);
-        }
 
-        // POST: Profiles/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "PPID,UserName,Friends,AboutMe,PrivacyFlag")] Profile profile)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(profile).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(profile);
-        }
 
         // GET: Profiles/Delete/5
         public ActionResult Delete(int? id)

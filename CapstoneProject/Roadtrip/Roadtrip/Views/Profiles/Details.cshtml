@@ -5,7 +5,8 @@
 }
 
 <script type="text/javascript">
-        origText = "@Model.AboutMe";
+    origText = "@Model.AboutMe";
+    tname = "";
 </script>
 
 @Scripts.Render("~/Scripts/ProfileJS.js")
@@ -31,13 +32,13 @@
             <div class="row">
                 <div class="col-lg-12" style="height:100px;">
                     @{
-                        var name = "default.jpg";
-                        if (File.Exists(Server.MapPath("/Uploads/" + Model.UserName + ".jpeg")))
+                        var name = "/Uploads/default.jpg";
+                        if (Model.PicLink != "null")
                         {
-                            name = Model.UserName + ".jpeg";
+                            name = Model.PicLink;
                         }
                         <div style="height: 100px;">
-                            <img src="~/Uploads/@name" class="profilepic" />
+                            <img src="@name" class="profilepic" />
                         </div>
                     }
                 </div>
@@ -63,15 +64,13 @@
                             {
                                 foreach (string s in Model.FollowerList)
                                 {
-                                    var tname = "default.jpg";
-                                    if (File.Exists(Server.MapPath("/Uploads/" + s + ".jpeg")))
-                                    {
-                                        tname = s + ".jpeg";
-                                    }
+                                    string r = "FL1" + @s;
                                     <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left;">
-                                        <a href="/Profiles/Details/@s"><img style="width: 30px; height: 30px; display: block; border: 1px solid black;" src="~/Uploads/@tname" /></a>
+                                        <a id="@r" href="/Profiles/Details/@s"></a>
+                                        <script type="text/javascript">
+                                    getImageLink('@r', '@s')
+                                        </script>
                                     </div>
-
                                 }
                             }
                         </div>
@@ -87,15 +86,13 @@
                             {
                                 foreach (string s in Model.FollowingList)
                                 {
-                                    var tname = "default.jpg";
-                                    if (File.Exists(Server.MapPath("/Uploads/" + s + ".jpeg")))
-                                    {
-                                        tname = s + ".jpeg";
-                                    }
+                                    string r = "FL2" + @s;
                                     <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left;">
-                                        <a href="/Profiles/Details/@s"><img style="width: 30px; height: 30px; display: block; border: 1px solid black;" src="~/Uploads/@tname" /></a>
+                                        <a id="@r" href="/Profiles/Details/@s"></a>
+                                        <script type="text/javascript">
+                                    getImageLink('@r', '@s')
+                                        </script>
                                     </div>
-
                                 }
                             }
                         </div>
@@ -143,24 +140,27 @@
                                 {
                                     foreach (string s in Model.PendingRequestsList)
                                     {
-                                        var tname = "default.jpg";
-                                        if (File.Exists(Server.MapPath("/Uploads/" + s + ".jpeg")))
-                                        {
-                                            tname = s + ".jpeg";
-                                        }
 
-                                        <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left; margin-left: 15%; margin-right: 20%;">
-                                            <a href="/Profiles/Details/@s"><img style="width: 30px; height: 30px; display: block; border: 1px solid black;" src="~/Uploads/@tname" /></a>
+                                        string r = "PR" + @s;
+                                        <div class="row">
+                                            <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left; margin-left: 20%;">
+                                                <a id="@r" href="/Profiles/Details/@s"></a>
+                                                <script type="text/javascript">
+                                                    getImageLink('@r', '@s')
+                                                </script>
+                                            </div>
+
+                                            <div data-toggle="tooltip" data-placement="top" title="Confirm Request" style="margin-left: 20%;">
+                                                <input name="@s" type="button" value="✔" onclick="confirmFollow(this.name)" style="float:left;">
+                                            </div>
+                                            <div data-toggle="tooltip" data-placement="top" title="Deny Request" style="margin-left: 10%;">
+                                                <input name="@s" type="button" value="❌" onclick="denyFollow(this.name)" style="float:left;">
+                                            </div>
+                                            <br />
                                         </div>
-                                        <div data-toggle="tooltip" data-placement="top" title="Confirm Request">
-                                            <input name="@s" type="button" value="✔" onclick="confirmFollow(this.name)" style="float:left; margin-left: 5%;">
-                                        </div>
-                                        <div data-toggle="tooltip" data-placement="top" title="Deny Request">
-                                            <input name="@s" type="button" value="❌" onclick="denyFollow(this.name)" style="float:left; margin-left: 5%;">
-                                        </div>
-                                        <br />
                                     }
                                 }
+
                             </div>
                         </div>
                         <div class="row">
@@ -174,13 +174,12 @@
                                 {
                                     foreach (string s in Model.RequestsPendingList)
                                     {
-                                        var tname = "default.jpg";
-                                        if (File.Exists(Server.MapPath("/Uploads/" + s + ".jpeg")))
-                                        {
-                                            tname = s + ".jpeg";
-                                        }
-                                        <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left; margin-left: 5%;">
-                                            <a href="/Profiles/Details/@s"><img style="width: 30px; height: 30px; display: block; border: 1px solid black;" src="~/Uploads/@tname" /></a>
+                                        string r = "RP" + @s;
+                                        <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left;">
+                                            <a id="@r" href="/Profiles/Details/@s"></a>
+                                            <script type="text/javascript">
+                                    getImageLink('@r', '@s')
+                                            </script>
                                         </div>
                                     }
                                 }

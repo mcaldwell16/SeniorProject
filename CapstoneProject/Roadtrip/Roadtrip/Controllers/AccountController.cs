@@ -49,6 +49,7 @@ namespace Roadtrip.Controllers
             return View(lr);
         }
 
+
         [HttpPost]
         public ActionResult Edit(HttpPostedFileBase postedFile)
         {
@@ -192,6 +193,7 @@ namespace Roadtrip.Controllers
                 profile.Following = "[Following]\n";
                 profile.PendingRequests = "[PendingRequests]\n";
                 profile.RequestsPending = "[RequestsPending]\n";
+                profile.PicLink = "null\n";
                 profileDB.Profiles.Add(profile);
 
                 try

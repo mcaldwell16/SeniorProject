@@ -47,6 +47,8 @@ namespace Roadtrip.Models
         public List<string> PendingRequestsList { get; set; }
         public List<string> RequestsPendingList { get; set; }
         public List<string> RecentActivityList { get; set; }
+        public string PicLink { get; set; }
+
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Attendant> Attendants { get; set; }
