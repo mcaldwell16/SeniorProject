@@ -168,6 +168,8 @@ namespace Roadtrip.Controllers
             List<string> city = new List<string>();
             List<string> state = new List<string>();
             List<string> zipcode = new List<string>();
+            List<string> latitude = new List<string>();
+            List<string> longitude = new List<string>(); 
             //List<string> ids = new List<string>();
 
             name.Add((string)test["name"]);
@@ -178,6 +180,8 @@ namespace Roadtrip.Controllers
             city.Add((string)test["location"]["city"]);
             state.Add((string)test["location"]["state"]);
             zipcode.Add((string)test["location"]["zip_code"]);
+            latitude.Add((string)test["coordinates"]["latitude"]);
+            longitude.Add((string)test["coordinates"]["longitude"]); 
             //ids.Add((string)test["id"]);
 
             var FinalList = new
@@ -190,7 +194,9 @@ namespace Roadtrip.Controllers
                 addresss = address,
                 citys = city,
                 states = state,
-                zipcodes = zipcode
+                zipcodes = zipcode, 
+                latitudes = latitude,
+                longitudes = longitude
             };
             return Json(FinalList, JsonRequestBehavior.AllowGet);
         }

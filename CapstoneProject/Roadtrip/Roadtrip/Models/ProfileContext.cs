@@ -9,7 +9,7 @@ namespace Roadtrip.Models
     public partial class ProfileContext : DbContext
     {
         public ProfileContext()
-            : base("name=SavedContext")
+            : base("name=BradLocal")
         {
         }
 

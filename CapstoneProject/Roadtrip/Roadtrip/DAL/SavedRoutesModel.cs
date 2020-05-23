@@ -9,7 +9,7 @@ namespace Roadtrip.DAL
     public partial class SavedRoutesModel : DbContext
     {
         public SavedRoutesModel()
-            : base("name=SavedContext")
+            : base("name=BradLocal")
         {
         }
 

@@ -10,6 +10,7 @@ function showLikeModal(data) {
            <input id="${data[i].EstablishmentID}" type="button" value="Get Details" onclick="details(this.id)"> 
 
         <input id="${data[i].EstablishmentID}" type="button" value="Unlike" onclick="unlikeEst(this.id)">
+        <input id="${data[i].EstablishmentID}" type="button" value="Add Location" onclick="addName(this.id)"> </br>
 <br /> </li>
             
             
@@ -386,6 +387,7 @@ function addName(id) {
             success: showName,
             error: errorOnAjax
         });
+        
         for (let i = 0; i < searchedLocations.indexs.length; i++) {
             if (searchedLocations.id[i] == id) {
                 selectedLocations.name.push(searchedLocations.name[i]);
@@ -458,13 +460,20 @@ function reOrder() {
 
 function showName(data) {
 
-    
 
+    console.log(data); 
     $('#sortable').append(`<li class="list-group-item list-group-item-dark test" id="${data.names[0]}"">${data.names[0]} <br><input id="${data.names[0]}" type="button" value="Delete" onclick="removeElement(this.id)"</li>`);
 
    
 
-
+    selectedLocations.name.push(data.names[0]);
+    //selectedLocations.rating.push(searchedLocations.rating[i]);
+    //selectedLocations.indexs.push(searchedLocations.indexs[i]);
+    selectedLocations.latitude.push(data.latitudes[0]);
+    selectedLocations.longitude.push(data.longitudes[0]);
+    selectedLocations.id.push(data.id);
+    plotMap();
+    console.log(selectedLocations); 
    
 
 

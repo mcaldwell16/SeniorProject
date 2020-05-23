@@ -14,11 +14,13 @@ function addToIndexList() {
     for (var i = paginationPosition; i < paginationPosition + loadItems; i++) {
         $('#indexList').append(`
             <div id="${RouteList[i].SRID}" class= "row" style="border-style: solid; border-color: darkslategrey;"> <div style='width: 5%; height: 30vh;'>${i + 1}.</div>
+                
                 <div id='rmap${i}' style='width: 60%; height:30vh; border-style: solid; border-color: darkseagreen;'></div>
-                <div style='width: 35%; height:30vh; text-align: center; padding-top: 13vh;'><i>By ${RouteList[i].Username} <br> 
+                <div id="${RouteList[i].routeName}" style='width: 35%; height:30vh; text-align: center; padding-top: 2vh;'><i>By ${RouteList[i].Username} <br /> 
                 Route Name: ${RouteList[i].routeName}</i>
                 <br> 
-                Tags: ${RouteList[i].Tag1}, ${RouteList[i].Tag2}</div>
+                Tags: ${RouteList[i].Tag1}, ${RouteList[i].Tag2} <br /> 
+                Stops: <br /> </div>
                 <div id="thisID"></div> 
                 
                
@@ -26,6 +28,9 @@ function addToIndexList() {
            
             </div>
             `);
+        for (var j = 0; j < RouteList[i].Locations.length; j++) {
+            $(`#${RouteList[i].routeName}`).append(`${j + 1}. ${RouteList[i].Locations[j].Name} <br />`);
+        }
          mainLike(RouteList[i].SRID, RouteList[i].Username);
 
         console.log(RouteList); 
