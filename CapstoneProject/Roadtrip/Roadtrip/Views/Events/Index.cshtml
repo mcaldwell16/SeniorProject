@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Roadtrip.Models.Event>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create", "Saved", "SavedRoutes")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.EventName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Route)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Start)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Finish)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.EventName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Route)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Start)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Finish)
+        </td>
+
+        <td>
+            @using (Html.BeginForm("Index", "Events"))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="EventID" value="@item.EID" />
+                <input type="submit" value="Attend" />
+            }
+            |
+            <!--@Html.ActionLink("Details", "Details", new { id = item.EID })-->
+        </td>
+    </tr>
+}
+
+</table>

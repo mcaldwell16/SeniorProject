@@ -2,6 +2,7 @@
 @{
     ViewBag.Title = "Register";
 }
+@using reCAPTCHA.MVC
 
 @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
@@ -37,6 +38,12 @@
     </div>
     <div class="form-group">
         <div class="col-md-12" align="center">
+            @Html.Recaptcha()
+            @Html.ValidationMessage("ReCaptcha")
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-12" align="center">
 
             <input type="submit" class="btn btn-secondary" value="Register" />
 
@@ -48,4 +55,5 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 }

@@ -21,6 +21,7 @@ namespace Roadtrip.Controllers
         public ActionResult Index()
         {
             return View(db.Profiles.ToList());
+
         }
 
 

@@ -23,7 +23,12 @@ namespace Roadtrip.Controllers
     {
        // ApplicationDbContext db = new ApplicationDbContext();
         CommentsModel db1 = new CommentsModel();
+
+        ProfileContext db2 = new ProfileContext();
+
+
         private SavedRoutesModel db = new SavedRoutesModel();
+
 
         // GET: Routes
         [HttpGet]
@@ -360,6 +365,48 @@ namespace Roadtrip.Controllers
             return jsonString;
         }
 
+        public ActionResult Destinations()
+        {
+            return View();
+        }
+
+
+        public string parseRoute(string route)
+        {
+            Route r = new Route();
+            string[] words = route.Split('\n');
+            int start, end;
+            RLocation rl;
+
+            for (int i = 0; i < words.Length - 1; i++)
+            {
+                rl = new RLocation();
+
+                start = words[i].IndexOf("[Na]");
+                end = words[i].LastIndexOf("[Na]");
+                rl.Name = words[i].Substring(start + 4, end - start - 4);
+                r.Locations.Add(rl);
+            }
+            string s = r.Locations.ToString();
+            return s;
+        }
+
+        public ActionResult Events()
+        {
+
+            var userName = User.Identity.Name;
+            List<Profile> test = db2.Profiles.Where(Profiles => Profiles.UserName == userName).ToList();
+            int ChristAlmightyThatTookWayTooLong = test[0].PPID;
+
+            Profile profile = db2.Profiles.Find(ChristAlmightyThatTookWayTooLong);
+
+            if (profile == null)
+            {
+                return HttpNotFound();
+            }
+            EventsViewModel thisUser = new EventsViewModel(profile);
+            return View(thisUser);
+        }
     }
 
 }

@@ -1,0 +1,74 @@
+﻿@model Roadtrip.Models.Event
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Event</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.EventName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EventName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Route)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Route)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Host)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Host)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Start)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Start)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Finish)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Finish)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Attending)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Attending)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Privacy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Privacy)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.EID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

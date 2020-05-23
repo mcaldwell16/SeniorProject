@@ -9,6 +9,12 @@ namespace Roadtrip.Models
     [Table("Profile")]
     public partial class Profile
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Profile()
+        {
+            Attendants = new HashSet<Attendant>();
+        }
+
         [Key]
         public int PPID { get; set; }
 
@@ -41,5 +47,8 @@ namespace Roadtrip.Models
         public List<string> PendingRequestsList { get; set; }
         public List<string> RequestsPendingList { get; set; }
         public List<string> RecentActivityList { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Attendant> Attendants { get; set; }
     }
 }

@@ -342,8 +342,12 @@ window.onclick = function (event) {
     var bool = true; 
     */
 
+/*function moreDetails(id) {
+    var source = '/Routes/GetMoreDetails/' + id;
+=======
 function moreDetails(id) {
     var source = '/Routes/GetMoreDetails?id=' + id;
+>>>>>>> dev
 
     $.ajax({
         type: 'GET',
@@ -352,8 +356,10 @@ function moreDetails(id) {
         success: showMoreDetails,
         error: errorOnAjax
     });
+<<<<<<< HEAD
 }
-
+}
+*/
 function showMoreDetails(data) {
     console.log(data);
     $('#comments').empty();
@@ -400,6 +406,7 @@ function addName(id) {
         }
         if (selectedLocations.name.length > 1) {
             toggleOn("saveButton");
+            toggleOn("exportButton");
         }
 
 
@@ -497,6 +504,7 @@ function removeElement(elementId) {
             //delete selectedLocations.longitude[i]; 
             if (selectedLocations.name.length < 2) {
                 toggleOff("saveButton");
+                toggleOff("exportButton");
             }
             console.log(selectedLocations);
             plotMap();
@@ -566,7 +574,7 @@ Math.easeInOutQuad = function (t, b, c, d) {
 
 
 function showMap(data) {
-    document.getElementById('searchmap').innerHTML = "<div id='smap' style='width: 100%; height: 100%;'></div>";
+    document.getElementById('searchmap').innerHTML = "<div id='smap' style='height: 100%; background-color: black;'></div>";
     var mymap = L.map('smap').setView([data.latitude[0], data.longitude[0]], 13);
 
 
@@ -575,7 +583,7 @@ function showMap(data) {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
             '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
             'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        id: 'mapbox/streets-v11',
+        id: 'mapbox/dark-v10',
         tileSize: 512,
         zoomOffset: -1
     }).addTo(mymap);
@@ -591,7 +599,7 @@ function showMap(data) {
     }
 
     var group = new L.featureGroup(array);
-    mymap.fitBounds(group.getBounds());
+    mymap.fitBounds(group.getBounds().pad(0.5));
 
 
 }
@@ -628,7 +636,7 @@ function plotMap(data) {
         router: L.Routing.mapbox('pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw')
     }).addTo(mymap);
     control.hide();
-    mymap.fitBounds(group.getBounds());
+    mymap.fitBounds(group.getBounds().pad(0.5));
 }
 
 function getDistance(rwp1, rwp2) {
@@ -891,7 +899,7 @@ function ACS() {
     }).addTo(mymap);
     control.hide();
     var group = new L.featureGroup(array);
-    mymap.fitBounds(group.getBounds());
+    mymap.fitBounds(group.getBounds().pad(0.5));
 }
 
 

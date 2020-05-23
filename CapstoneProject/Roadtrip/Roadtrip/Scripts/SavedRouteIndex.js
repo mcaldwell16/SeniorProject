@@ -19,13 +19,18 @@ function addToIndexList() {
                 <div id="${RouteList[i].routeName}" style='width: 35%; height:30vh; text-align: center; padding-top: 2vh;'><i>By ${RouteList[i].Username} <br /> 
                 Route Name: ${RouteList[i].routeName}</i>
                 <br> 
+<<<<<<< HEAD
                 Tags: ${RouteList[i].Tag1}, ${RouteList[i].Tag2} <br /> 
                 Stops: <br /> </div>
                 <div id="thisID"></div> 
+=======
+                Tags: ${RouteList[i].Tag1}, ${RouteList[i].Tag2}
+                <br><button type="button" id="Etgm${i}" class="btn btn-primary" onclick="gMapsExport(${i})">Export to Google Maps</button>
+                </div>
+>>>>>>> dev
                 
-               
-            
-           
+                <div id="thisID"></div> 
+
             </div>
             `);
         for (var j = 0; j < RouteList[i].Locations.length; j++) {

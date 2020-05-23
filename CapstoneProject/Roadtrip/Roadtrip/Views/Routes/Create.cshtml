@@ -1,12 +1,17 @@
-﻿@model  IEnumerable<Roadtrip.Models.Comment>
+﻿@model IEnumerable<Roadtrip.Models.Comment>
 
 @{
 
     ViewBag.Title = "Home Page";
-
+    Layout = "~/Views/Shared/CreateRouteLayout.cshtml";
 }
 
 <script type="text/javascript">
+    var map;
+    var control = null;
+    var searchGroup;
+    var routeGroup;
+
     searchedLocations = {
         name: [],
         rating: [],
@@ -32,11 +37,12 @@
         $("#sortable").sortable({
             stop: function (event, ui) {
                 reOrder(); // re-number rows after sorting
-    }
-});
+            }
+        });
         $("#sortable").disableSelection();
     });
 </script>
+
 
 <!--<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -47,89 +53,79 @@
     });</script>-->
 
 <body>
-    <div class="container" id="panel">
-        <div class="row" style="text-align:center">
-            <form class="form-inline">
-                <div class="form-group">
-                    <br />
-                    @using (Html.BeginForm())
-                    {
-                        @Html.Label("Show me  ")
-                        <select id="name" class="form-control">
-                            <option value="food">Food</option>
-                            <option value="hotels">Hotels</option>
-                            <option value="shopping">Shopping</option>
-                            <option value="transportation">Transportation</option>
-                            <option value="activelife">Active Life</option>
-                            <option value="Arts&Entertainment">Arts & Entertainment</option>
-                            <option value="nightlife">Nightlife</option>
-                        </select>
-                        @Html.Label("  within  ")
-                        @Html.TextBox("numbers", 5, new
+
+    <div id="panel">
+        <div id="searchmap" style="width:100vw; height:91vh;">
+            <div id="smap" style="height: 100%; background-color: black;"></div>
+            <div class="mapoverlay1">
+
+                <form class="form-inline">
+                    <div class="form-group" style="padding: 15px 0px 0px 15px;">
+
+                        @using (Html.BeginForm())
                         {
-                            @class = "form-control mx-1",
-                            @placeholder = "15",
-                            @type = "number",
-                            @min = 1,
-                            @max = 25,
-                            @style = "width: 60px;"
-                        })
-                        @Html.Label("  miles of  ")
-                        <input class="mx-1" type="text" id="city" value="monmouth" />
-                        <input class="mx-1" type="text" id="state" value="oregon" />
-                        @Html.Label(" .")
-                        @Html.Label(" .")
-                        <button type="button" id="myButton" class="btn btn-primary" onclick="establishments()">Search</button>
-                        <button type="button" id="saveButton" class="btn btn-outline-secondary" style="display: none; margin-left:5px;" onclick="saveRoute()">Save my route!</button>
-                    }
-                </div>
-            </form>
+                            @Html.Label("Show me", new
+                            {
+                                @style = "padding: 0px 10px 0px 10px; text-shadow: 0 0 3px #000000, 0 0 5px #000000;"
+                            })
+                            <select id="name" class="form-control" style="width: 100px;">
+                                <option value="food">Food</option>
+                                <option value="hotels">Hotels</option>
+                                <option value="shopping">Shopping</option>
+                                <option value="transportation">Transportation</option>
+                                <option value="activelife">Active Life</option>
+                                <option value="Arts&Entertainment">Arts & Entertainment</option>
+                                <option value="nightlife">Nightlife</option>
+                            </select>
+                            @Html.Label("within", new
+                            {
+                                @style = "padding: 0px 10px 0px 10px; text-shadow: 0 0 3px #000000, 0 0 5px #000000;"
+                            })
+                            @Html.TextBox("numbers", 5, new
+                            {
+                                @class = "form-control mx-1",
+                                @placeholder = "15",
+                                @type = "number",
+                                @min = 1,
+                                @max = 25,
+                                @style = "width: 60px;"
+                            })
 
-        </div>
-        <br />
-        <div class="row">
+                            @Html.Label("miles of", new
+                            {
+                                @style = "padding: 0px 10px 0px 10px; text-shadow: 0 0 3px #000000, 0 0 5px #000000;"
+                            })
+                            <input class="mx-1" type="text" id="city" value="monmouth" />
+                            <input class="mx-1" type="text" id="state" value="oregon" />
 
-            <div class="col-lg-6">
-                <div id="searchmap" style="height:300px;"></div>
-            </div>
-
-            <div class="col-lg-6">
-                <div id="routemap" style="height:300px;"></div>
-            </div>
-        </div>
-
-        <div class="row">
-
-            <div class="col-lg-4" id="establishments" style="height:300px;overflow-y:scroll;">Locations:</div>
-
-            <ul class="col-lg-3" id="sortable" style="height:300px; overflow:scroll" onchange="reOrder()"></ul>
-
-
-            <!--<ul class="col-lg-4" id="sortable" style="height:300px; overflow:scroll">Route: <input type="button" value="Re-Order" onclick="reOrder()"></ul>-->
-            <!-- Large modal -->
-            <button type="button" class="btn btn-primary" data-toggle="modal" style="width:140px; height:60px;" data-target=".bd-example-modal-lg" onclick="appendLiked()">Liked Establishments</button>
-
-            <div class="modal fade bd-example-modal-lg"  tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div style="background-color:black;" class="modal-content" id="modaly">
-
+                            <div data-toggle="tooltip" data-placement="top" title="Search">
+                                <button type="button" id="myButton" class="btn btn-primary" onclick="establishments()">🔍</button>
+                            </div>
+                            <div data-toggle="tooltip" data-placement="top" title="Save Route">
+                                <button type="button" id="saveButton" class="btn btn-primary" style="display: none; margin-left:5px;" onclick="saveRoute()">💾</button>
+                            </div>
+                            <div data-toggle="tooltip" data-placement="top" title="Export to Google Maps">
+                                <button type="button" id="exportButton" class="btn btn-primary" style="display: none; margin-left:5px;" onclick="gMapsExportCreate()">➠</button>
+                            </div>
+                        }
                     </div>
-                </div>
+                </form>
             </div>
-
-
-
-
-
-            <div class="col-lg-4">
+            <div class="mapoverlay2">
+                <p style="height: 1vh;">Search Results</p>
+                <div id="establishments" style="width:100%; height:35vh; overflow-y: scroll;"></div>
+                <p style="height: 1vh;">Current Route</p>
+                <ul id="sortable" style="height: 35vh; overflow-y: scroll;" onchange="reOrder()"></ul>
+            </div>
+            <div class="mapoverlay3">
                 <div>
-                    @Html.Label("Name Your Route! ")
-                    <input class="mx-1" type="text" id="routeName" style="height:50px" />
+                    @Html.Label("Name:")
+                    <input class="mx-1" type="text" id="routeName" style="height:50px; width:15vw;" />
                 </div>
-                <br />
+
                 <div>
-                    @Html.Label("Add a Tag: ")
-                    <select id="Tag" class="form-control">
+                    @Html.Label("Tags:")
+                    <select id="Tag" class="form-control pull-right" style="width: 40%;">
                         <option value="food">Food</option>
                         <option value="family">Family</option>
                         <option value="Fun">Fun</option>
@@ -138,7 +134,7 @@
                         <option value="Shopping">Shopping</option>
                     </select>
 
-                    <select id="Tag2" class="form-control">
+                    <select id="Tag2" class="form-control pull-right" style="width: 40%;">
                         <option value="food">Food</option>
                         <option value="family">Family</option>
                         <option value="Fun">Fun</option>
@@ -147,60 +143,71 @@
                         <option value="Shopping">Shopping</option>
                     </select>
                 </div>
-                <br />
+                <button type="button" class="btn btn-primary" data-toggle="modal" style="width:100%;" data-target=".bd-example-modal-lg" onclick="appendLiked()">Liked Establishments</button>
+
                 <div id="shortroute">
                     Shortest Route:
-                    <button type="button" id="myrButton" onclick="ACS()">generate</button>
-                    <div class="col-lg-2" id="short"></div>
+                    <button type="button" id="myrButton" onclick="ACS()">generate 🐜</button>
+                    <div style="height: 12vh; width:100%; overflow-y: scroll;" id="short"></div>
                 </div>
-            </div>
-            
-
-        </div>
-    </div>
-
-    <div class="modalWrapper">
-        <div id="myModal" class="modal">
-
-            <!-- Modal content -->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <span class="close">&times;</span>
-                </div>
-                <div class="col-lg-12" id="details" style="height:500px;">Details:</div>
-                <div class="modal-body" id="modalBody"></div>
-                <div class="comments" id="comments"></div>
-                <a href="Create/Comments/1" id="createComment" target="_blank, width = '400px', height = '400px'">Add Comment</a>
             </div>
 
         </div>
+
+       
+        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div style="background-color:black;" class="modal-content" id="modaly">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="modalWrapper">
+            <div id="myModal" class="modal">
+
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="close">&times;</span>
+                    </div>
+                    <div class="col-lg-12" id="details" style="height:500px;">Details:</div>
+                    <div class="modal-body" id="modalBody"></div>
+                    <div class="comments" id="comments"></div>
+                    <a href="Create/Comments/1" id="createComment" target="_blank, width = '400px', height = '400px'">Add Comment</a>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="alertboard" style="display: none;"></div>
+
+
+
+
+
     </div>
 
-    <div id="alertboard" style="display: none;"></div>
-
-    
-   
 
 
 
-
-
-
-
-    @Styles.Render("https://unpkg.com/leaflet@1.6.0/dist/leaflet.css")
-    @Scripts.Render("https://unpkg.com/leaflet@1.6.0/dist/leaflet.js")
-    @Styles.Render("~/Content/leaflet-routing-machine.css")
-    @Scripts.Render("~/Scripts/leaflet-routing-machine.js")
-    @Scripts.Render("~/Scripts/mapScripts.js")
-    @Scripts.Render("~/Scripts/main.js")
-    @Scripts.Render("~/Scripts/PlacesAPI.js")
 
 </body>
 
 
+@Styles.Render("https://unpkg.com/leaflet@1.6.0/dist/leaflet.css")
+@Scripts.Render("https://unpkg.com/leaflet@1.6.0/dist/leaflet.js")
+@Styles.Render("~/Content/leaflet-routing-machine.css")
+@Scripts.Render("~/Scripts/leaflet-routing-machine.js")
+
+@Scripts.Render("~/Scripts/LeafletExtension.js")
+
+
+
+@Scripts.Render("~/Scripts/PlacesAPIv2.js")
+@Scripts.Render("~/Scripts/GMaps.js")
 
 
 
 
 
-   
