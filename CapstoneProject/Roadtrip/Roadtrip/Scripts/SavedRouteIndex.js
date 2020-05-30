@@ -18,17 +18,17 @@ function addToIndexList() {
                 <div style='width: 35%; height:30vh; text-align: center; padding-top: 13vh;'><i>By ${RouteList[i].Username} <br> 
                 Route Name: ${RouteList[i].routeName}</i>
                 <br> 
-                Tags: ${RouteList[i].Tag1}, ${RouteList[i].Tag2}</div>
-                <div id="thisID"></div> 
+                Tags: ${RouteList[i].Tag1}, ${RouteList[i].Tag2}
+                <br><button type="button" id="Etgm${i}" class="btn btn-primary" onclick="gMapsExport(${i})">Export to Google Maps</button>
+                </div>
                 
-               
-            
-           
+                <div id="thisID"></div> 
+
             </div>
             `);
          mainLike(RouteList[i].SRID, RouteList[i].Username);
-      
-        
+
+        console.log(RouteList); 
 
 
 
@@ -333,4 +333,73 @@ function printSortedList(tag) {
             showRoute(i, 'rmap' + i);
         }
     }
+}
+function searchRoutes(data) {
+    if (data == null) {
+        var item = document.getElementById('searchItem');
+        var search = item.value;
+        console.log(search);
+        var source = '/SavedRoutes/SearchSaved?ID=' + search;
+        $.ajax({
+            type: 'GET',
+            datatype: 'json',
+            url: source,
+            success: showSearch,
+            error: errorOnAjax
+        });
+    }
+    else {
+        var source = '/SavedRoutes/SearchSaved?ID=' + data;
+        $.ajax({
+            type: 'GET',
+            datatype: 'json',
+            url: source,
+            success: showSearch,
+            error: errorOnAjax
+        });
+
+    }
+}
+function showSearch(data) {
+    console.log(data); 
+    var item = document.getElementById('searchItem');
+    var search = item.value;
+    $('#ResultsModal').empty();
+   // $('#ResultsModal').append(`<div style="color:white; margin-left: 20px;"> All Routes that include ${search} </div>`);
+    $('#ResultsModal').append('<ul style="margin-left: -20px; margin-right: 20px; margin-top: 15px;" id="SearchedList"></ul>');
+    for (var i = 0; i < data.length; i++) {
+        $('#SearchedList').append(`
+        <li id="${data[i].routeName}" class="list-group-item list-group-item-dark" class="list-group-item list-group-item-dark" >Name: ${data[i].routeName} <br /> Locations: <br />  </li>`);
+        for (var j = 0; j < data[i].Locations.length; j++) {
+            $(`#${data[i].routeName}`).append(`${j+1}. ${data[i].Locations[j].Name} <br />`)
+        }
+    }
+}
+
+
+function showLikeModal(data) {
+    console.log(data);
+    $('#modaly').empty();
+    $('#modaly').append('<ul style="margin-left: -20px; margin-right: 20px; margin-top: 15px;" id="likedEstList"></ul>');
+    for (var i = 0; i < data.length; i++) {
+        $('#likedEstList').append(`
+        <li  class="list-group-item list-group-item-dark" class="list-group-item list-group-item-dark" >Name: ${data[i].EstablishmentName} <br /> 
+            User Name: ${data[i].UserName} <br /> 
+            <button type="button" id="${data[i].EstablishmentName}" class="btn btn-primary" data-toggle="modal" style="width:140px; height:60px;" data-target=".bd-example-modal-lg" onclick="searchRoutes(this.id)">Search</button>
+           </li>
+            
+            
+`);
+    }
+}
+
+function appendLiked() {
+    var source = '/Routes/getLikeEstablishments';
+    $.ajax({
+        type: 'GET',
+        datatype: 'json',
+        url: source,
+        success: showLikeModal,
+        error: errorOnAjax
+    });
 }

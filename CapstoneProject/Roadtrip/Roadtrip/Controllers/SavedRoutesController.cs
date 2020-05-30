@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 using Roadtrip.DAL;
 using Roadtrip.Models; 
 
@@ -23,6 +24,14 @@ namespace Roadtrip.Controllers
         public string Tag1 { get; set; }
         public string Tag2 { get; set; }
     }
+    public struct MoreInfo
+    {
+        public string RouteName { get; set; }
+        public string UserName { get; set; }
+        public int RouteID { get; set; }
+        public string tag1 { get; set; }
+        public string tag2 { get; set; }
+    };
 
 public struct RLocation
     {
@@ -103,7 +112,7 @@ public struct RLocation
         public ActionResult Index()
         {
             //List<SavedRoute> sr = db.SavedRoutes.OrderByDescending(s => s.Timestamp).ToList();
-
+            List<MoreInfo> mr = new List<MoreInfo>(); 
           
                 List<SavedRoute> sr = db.SavedRoutes
                     .OrderByDescending(s => s.Timestamp)
@@ -114,7 +123,18 @@ public struct RLocation
               .Where(s => s.UserName.Contains(User.Identity.Name))
               .ToList();
 
-                ViewBag.LikedList = lr;
+            for (int i = 0; i <= lr.Count -1; i++)
+            {
+                for (int j = 0; j <= sr.Count - 1; j++)
+                {
+                    if (lr[i].RouteID == sr[j].SRID)
+                    {
+                        mr.Add(new MoreInfo { RouteName = sr[j].RouteName, UserName = sr[j].Username, RouteID = sr[j].SRID, tag1 = sr[j].Tag1, tag2 = sr[j].Tag2 }); 
+                    }
+                }
+            }
+
+                ViewBag.LikedList = mr;
 
                 return View(LoadRoute(sr));
           
@@ -354,6 +374,24 @@ public struct RLocation
             }
             return Json(true); 
         }
+        public ActionResult UnlikeEst()
+        {
+            string ID = Request.QueryString["ID"];
+
+            List<LikedEstablishments> le = db.LikedEstablishments
+                .Where(s => s.UserName.Contains(User.Identity.Name)).ToList();
+
+            for (int i = 0; i < le.Count; i++)
+            {
+                if (ID == le[i].EstablishmentID)
+                {
+                    db.LikedEstablishments.Remove(le[i]);
+                    db.SaveChanges(); 
+                }
+            }
+
+            return Json(true); 
+        }
 
         public ActionResult SaveLike()
         {
@@ -389,6 +427,51 @@ public struct RLocation
                 }
             }
             return Json(true); 
+        }
+        public ActionResult CheckLikeEstablishment()
+        {
+            string ID = Request.QueryString["ID"];
+            List<LikedEstablishments> le = db.LikedEstablishments.Where(s => s.UserName
+            .Contains(User.Identity.Name)).ToList(); 
+                
+            for (int i = 0; i < le.Count; i++)
+            {
+                if (ID == le[i].EstablishmentID)
+                {
+                    return Json(false); 
+                }
+            }
+
+            return Json(true); 
+        }
+
+        public ActionResult SaveLikeEstablishment()
+        {
+            string ESTID = Request.QueryString["ID"];
+           
+            string ESTName = Request.QueryString["ID2"];
+            LikedEstablishments likedEstablishments = new LikedEstablishments();
+            likedEstablishments.EstablishmentID = ESTID;
+            likedEstablishments.EstablishmentName = ESTName;
+            likedEstablishments.UserName = User.Identity.Name;
+
+            db.LikedEstablishments.Add(likedEstablishments);
+            db.SaveChanges(); 
+            return Json(true); 
+        }
+        public ActionResult SearchSaved()
+        {
+
+            string ID = Request.QueryString["ID"];
+            List<SavedRoute> sr = db.SavedRoutes.Where(s => s.Route.Contains(ID)).ToList();
+            return new ContentResult
+            {
+                // serialize C# object "commits" to JSON using Newtonsoft.Json.JsonConvert
+                Content = JsonConvert.SerializeObject(LoadRoute(sr)),
+                ContentType = "application/json",
+                ContentEncoding = System.Text.Encoding.UTF8
+            };
+            
         }
         
     }

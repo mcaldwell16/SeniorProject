@@ -21,8 +21,13 @@ namespace Roadtrip.Controllers
     [Authorize]
     public class RoutesController : Controller
     {
-        ApplicationDbContext db = new ApplicationDbContext();
+       // ApplicationDbContext db = new ApplicationDbContext();
         CommentsModel db1 = new CommentsModel();
+
+        ProfileContext db2 = new ProfileContext();
+
+
+        private SavedRoutesModel db = new SavedRoutesModel();
 
 
         // GET: Routes
@@ -44,6 +49,21 @@ namespace Roadtrip.Controllers
             return View();
         }
 
+        public ActionResult getLikeEstablishments()
+        {
+            List<LikedEstablishments> le = db.LikedEstablishments
+             .Where(s => s.UserName.Contains(User.Identity.Name)).ToList();
+
+            return new ContentResult
+            {
+                // serialize C# object "commits" to JSON using Newtonsoft.Json.JsonConvert
+                Content = JsonConvert.SerializeObject(le),
+                ContentType = "application/json",
+                ContentEncoding = System.Text.Encoding.UTF8
+            };
+
+        }
+
         public ActionResult Create()
         {
 
@@ -53,7 +73,17 @@ namespace Roadtrip.Controllers
                 ViewBag.loggedIn = true;
             }
             else
+            {
                 ViewBag.loggedIn = false;
+            }
+
+            List<LikedEstablishments> le = db.LikedEstablishments
+             .Where(s => s.UserName.Contains(User.Identity.Name))
+             .ToList();
+
+            ViewBag.LikedList = le;
+
+
             return View();
         }
 
@@ -329,6 +359,48 @@ namespace Roadtrip.Controllers
             return jsonString;
         }
 
+        public ActionResult Destinations()
+        {
+            return View();
+        }
+
+
+        public string parseRoute(string route)
+        {
+            Route r = new Route();
+            string[] words = route.Split('\n');
+            int start, end;
+            RLocation rl;
+
+            for (int i = 0; i < words.Length - 1; i++)
+            {
+                rl = new RLocation();
+
+                start = words[i].IndexOf("[Na]");
+                end = words[i].LastIndexOf("[Na]");
+                rl.Name = words[i].Substring(start + 4, end - start - 4);
+                r.Locations.Add(rl);
+            }
+            string s = r.Locations.ToString();
+            return s;
+        }
+
+        public ActionResult Events()
+        {
+
+            var userName = User.Identity.Name;
+            List<Profile> test = db2.Profiles.Where(Profiles => Profiles.UserName == userName).ToList();
+            int ChristAlmightyThatTookWayTooLong = test[0].PPID;
+
+            Profile profile = db2.Profiles.Find(ChristAlmightyThatTookWayTooLong);
+
+            if (profile == null)
+            {
+                return HttpNotFound();
+            }
+            EventsViewModel thisUser = new EventsViewModel(profile);
+            return View(thisUser);
+        }
     }
 
 }

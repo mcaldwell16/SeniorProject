@@ -135,16 +135,20 @@ namespace Roadtrip.Controllers
             else
                 user = UserManager.FindByName(model.Email);
 
-
+            SignInStatus result;
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, shouldLockout: false);
+            if (user != null)
+                result = await SignInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, shouldLockout: false);
+            else
+                result = SignInStatus.Failure;
 
-            CheckProfilePage(user.UserName);
+
 
             switch (result)
             {
                 case SignInStatus.Success:
+                    CheckProfilePage(user.UserName);
                     var userid = UserManager.FindByEmail(model.Email).Id;
                     if (!UserManager.IsEmailConfirmed(userid))
                     {

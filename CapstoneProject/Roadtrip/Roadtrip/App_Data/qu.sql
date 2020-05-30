@@ -1,1 +1,1 @@
-SELECT * FROM LikedRoutes
+SELECT * FROM SavedRoutes

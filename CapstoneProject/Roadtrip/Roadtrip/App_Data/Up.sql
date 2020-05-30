@@ -118,5 +118,38 @@ CREATE TABLE [dbo].[Profile]
 [RequestsPending] varchar(MAX) NOT NULL,
 CONSTRAINT [PK_dbo.Profile] PRIMARY KEY CLUSTERED ([PPID] ASC)
 );
+
+
+CREATE TABLE [dbo].[Events]
+(
+[EID] INT IDENTITY (1,1) NOT NULL,
+[EventName] NVARCHAR (MAX) NOT NULL,
+[Route] NVARCHAR (MAX) NOT NULL,
+[Start] DATETIME NOT NULL,
+[Finish] DATETIME NOT NULL,
+CONSTRAINT [PK_dbo.Events] PRIMARY KEY CLUSTERED ([EID] ASC)
+);
+
+GO
+
+CREATE TABLE [dbo].[Attendants]
+(
+[AID] INT IDENTITY (1,1) NOT NULL,
+[UserID] INT NOT NULL,
+[EventID] INT NOT NULL,
+CONSTRAINT [PK_dbo.Attendants] PRIMARY KEY CLUSTERED ([AID] ASC),
+CONSTRAINT [FK_dbo.Attendants_dbo.Profile_PPID] FOREIGN KEY ([UserID]) REFERENCES [dbo].[Profile] ([PPID]) ON DELETE CASCADE,
+CONSTRAINT [FK_dbo.Attendants_dbo.Events_EID] FOREIGN KEY ([EventID]) REFERENCES [dbo].[Events] ([EID]) ON DELETE CASCADE
+);
+
+
+CREATE TABLE [dbo].[LikedEstablishments]
+(
+[LEID]			INT IDENTity (1,1) NOT NULL, 
+[EstablishmentID] NVARCHAR (MAX) NOT NULL, 
+[UserName]		NVARCHAR (256), 
+[EstablishmentName] NVARCHAR (MAX)
+CONSTRAINT [PK_dbo.LikedEstablishments] PRIMARY KEY CLUSTERED ([LEID] ASC)
+);
 GO
 

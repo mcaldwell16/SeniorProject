@@ -36,10 +36,10 @@
 body {
     padding-bottom: 20px;
     background-color: floralwhite;
-    background-image: url(route.jpg);
+    
     background-repeat: no-repeat;
     background-attachment: initial;
-    background-size: 100% 33%;
+    
 }
 
 /* Set padding to keep content from hitting the edges */

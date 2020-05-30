@@ -40,6 +40,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="@Url.Action("Index", "SavedRoutes")">View Routes</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Events", "Routes")">My Events</a>
+                </li>
             </ul>
         </div>
         <div class="mx-auto order-0">
@@ -62,7 +65,7 @@
                         <div class="nav-link" style="color:rgba(255, 255, 255, 0.5);">Hello, @User.Identity.Name!</div>
                     </li>
                     <li class="nav-item">
-                        <img src="~/Uploads/@name" class="profilepic-navbar" />
+                        <a href="/Profiles/Details/@truncName"><img src="~/Uploads/@name" class="profilepic-navbar" /></a>
                     </li>
                     <li class="nav-item">
                         <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
