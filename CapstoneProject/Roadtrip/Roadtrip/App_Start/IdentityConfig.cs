@@ -16,6 +16,8 @@ using Microsoft.Owin.Security;
 using Roadtrip.Models;
 using SendGrid;
 using System.Diagnostics;
+//using Twilio.Clients;
+using Twilio;
 //using SendGrid.Helpers.Mail;
 
 
@@ -37,6 +39,9 @@ namespace Roadtrip
         public Task SendAsync(IdentityMessage message)
         {
             // Plug in your SMS service here to send a text message.
+            var Twilio = new TwilioRestClient("AC3d8653d1eb37b7d2022b0f4bf2debef4", "73d9a1a8909e515d1d5a8277694fb7dc");
+            var result = Twilio.SendMessage("+13303558683", message.Destination, message.Body);
+            Trace.TraceInformation(result.Status);
             return Task.FromResult(0);
         }
     }
