@@ -25,5 +25,6 @@ namespace Roadtrip.DAL
         public string Tag1 { get; set;  }
 
         public string Tag2 { get; set; }
+        public int IsCurrent { get; set; }
     }
 }

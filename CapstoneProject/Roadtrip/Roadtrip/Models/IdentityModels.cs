@@ -22,7 +22,7 @@ namespace Roadtrip.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("BradLocal")
+            : base("SavedContext")
         {
         }
 
