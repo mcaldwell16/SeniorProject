@@ -35,9 +35,16 @@
 
 
 
-function showLikeModal(data) { 
+/*function to show the liked establishments modal on the Create a Route page*/
+function showLikeModal(data) {
     console.log(data);
+    /*empty the modal so the selected information can be places in*/
     $('#modaly').empty();
+    /*Injecting HTML code to place the info and style the modal. Loops through the selected data and prints out the 
+     specific information. Then appends 3 buttons: 
+     1. details: shows the details of the selected Establishment
+     2. unlike: unlikes and removes the establishment from you saved liked list
+     3. addName: adds the same to the selectedLocations list and to the map*/
     $('#modaly').append('<ul style="margin-left: -20px; margin-right: 20px; margin-top: 15px;" id="likedEstList"></ul>');
     for (var i = 0; i < data.length; i++) {
         $('#likedEstList').append(`
@@ -45,14 +52,15 @@ function showLikeModal(data) {
             User Name: ${data[i].UserName} <br /> 
            <input id="${data[i].EstablishmentID}" type="button" value="Get Details" onclick="details(this.id)"> 
 
-        <input id="${data[i].EstablishmentID}" type="button" value="Unlike" onclick="unlikeEst(this.id)">
+        <input id="${data[i].EstablishmentID}" type="button" value="Unlike" onclick="unlikeEst(this.id)"></br>
+ <input id="${data[i].EstablishmentID}" type="button" value="Add Location" onclick="addName(this.id)"> </br>
 <br /> </li>
             
             
 `);
     }
 }
-
+/*Ajax call to the controller to get the entire liked Establishments for the current user */
 function appendLiked() {
     var source = '/Routes/getLikeEstablishments';
     $.ajax({
@@ -63,14 +71,18 @@ function appendLiked() {
         error: errorOnAjax
     });
 }
+/*Function to check if places that are populated in the searched locations are currently already liked. Gets the entire list for a user from the database and checks 
+ the ids against eachother. If the establishment is already liked, then the unlike button is appended. If its not, then the like button is appended*/
 function mainLikeEST(id, name, lat) {
     var source = '/SavedRoutes/CheckLikeEstablishment?ID=' + id;
     var my;
+    /*Ajax call that sends back each ID to check against the users list*/
     $.ajax({
         type: 'POST',
         datatype: 'json',
         url: source,
         success: function (response) {
+            /*If the controller function returns true, then the establishment isn't in the current liked list. Appends the like button*/
             if (response) {
 
 
@@ -78,7 +90,7 @@ function mainLikeEST(id, name, lat) {
                 $(`#${id}`).append(` <input id="${id}" name="${name}" type="button" value="Like" onclick="checkLikeEstablishment(this.id, this.name)">`)
             }
             else {
-
+                /*If the controller function returns false, then the establishment is in the liked list and the unlike button is appended to the list*/
 
                 console.log("returned false");
                 $(`#${id}`).append(`<input name="${id}" type="button"  value="Unlike" onclick="unlikeEst(this.name)">`)
@@ -90,10 +102,12 @@ function mainLikeEST(id, name, lat) {
 
 
 }
-
+/*Function that is called when the unlike button is pressed. Sends the LikedEstablishment ID 
+ to the controller, to be found in the database and removed*/
 function unlikeEst(id) {
     console.log(id);
     var source = '/SavedRoutes/UnlikeEst?ID=' + id;
+    /*Ajax call to the controller that sends the LikedEstablishment ID. */
     $.ajax({
         type: 'POST',
         datatype: 'json',
@@ -101,7 +115,9 @@ function unlikeEst(id) {
         success: function (response) {
 
             setTimeout(function () { alert("Unliked Succeeded"); }, 500);
+            /*Calls appendLiked to have the liked list reloaded*/
             appendLiked();
+            /*Calls test(searchedLocations) to reload the searchedLocations list and update the like/unlike buttons*/
             test(searchedLocations);
 
         },
@@ -110,20 +126,26 @@ function unlikeEst(id) {
     });
 }
 
-
+/*Function that is called when the liked button is pressed. Sends the Establishment ID back to the controller
+ via Ajax call*/
 function checkLikeEstablishment(ID, Name) {
-
+    
     var source = '/SavedRoutes/CheckLikeEstablishment?ID=' + ID;
     $.ajax({
         type: 'POST',
         datatype: 'json',
         url: source,
         success: function (response) {
+            /*If the Ajax call returns true, the establishment isn't already liked*/
             if (response) {
+                /*the LikedEstablishments function is called to add the establishment to the current users liked list*/
                 LikeEstablishment(ID, Name);
+                /*function is called to update the list*/
                 test(searchedLocations);
             }
             else {
+                /*If the Ajax call returns false, the message pops up to tell the user that it has already been liked.
+                 Does not call any functions or add anything to the list*/
                 setTimeout(function () { alert("Already Liked"); }, 400);
                 console.log("ALREADY LIKED");
             }
@@ -133,10 +155,12 @@ function checkLikeEstablishment(ID, Name) {
     });
 
 }
+/*Function that actually adds the establishment to the users liked list*/
 
 function LikeEstablishment(data1, data2) {
     console.log(data1);
     console.log(data2);
+    /*Ajax call that sends the Establishment ID and the Name to be saved inside of the database*/
     var source = '/SavedRoutes/SaveLikeEstablishment?ID=' + data1 + "&ID2=" + data2;
     $.ajax({
         type: 'GET',
@@ -149,6 +173,7 @@ function LikeEstablishment(data1, data2) {
 
 
 }
+/*Sends confirmation to the console */
 function showSucc() {
     console.log("DATA SAVED");
 }
@@ -275,6 +300,7 @@ function test(data) {
 
 
 `);
+        /*Calls mainLikeEST function to check if the like or unlike buttons should be printed*/
         mainLikeEST(data.id[i], data.name[i], data.latitude[i]);
     }
 }
@@ -485,14 +511,18 @@ function showName(data) {
 
     $('#sortable').append(`<li class="list-group-item list-group-item-dark" id="${data.names[0]}">${data.names[0]}<div data-toggle="tooltip" data-placement="top" title="Delete"><input id="${data.names[0]}" type="button" value="❌" onclick="removeElement(this.id)"></div></li>`);
 
-}
+    
+   
 
+}
+/*Function that is called when the delete button is pressed in the selectedLocations list */
 function removeElement(elementId) {
     for (let i = selectedLocations.name.length; i >= 0; i--) {
+        /*Loops through the selectedLocations list and matches the desired location to be deleted */
         if (elementId == selectedLocations.name[i]) {
 
 
-
+            /*When the location is matched, the corresponding data is deleted from the list */
             selectedLocations.name.splice(i, 1);
             selectedLocations.latitude.splice(i, 1);
             selectedLocations.longitude.splice(i, 1);
@@ -508,6 +538,7 @@ function removeElement(elementId) {
                 toggleOff("exportButton");
             }
             console.log(selectedLocations);
+            /*Updates the map with the current list */
             showMap(searchedLocations);
         }
     }
@@ -541,7 +572,7 @@ function jumpTo(data, id) {
 
 }
 
-
+/*when called, this function scrolls to the selected elemenent in the searchedLocations list */
 function scrollTo(element, to, duration) {
     console.log(element);
     var start = element.scrollTop,
