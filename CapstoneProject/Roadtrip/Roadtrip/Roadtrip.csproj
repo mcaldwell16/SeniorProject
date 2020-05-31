@@ -307,15 +307,11 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-
     <Content Include="404.aspx" />
     <Content Include="404.html" />
     <Content Include="500.aspx" />
     <Content Include="500.html" />
-
-
     <Content Include="App_Data\Down.sql" />
-
     <Content Include="App_Data\Up.sql" />
     <Content Include="Content\404.png" />
     <Content Include="Content\500.png" />
@@ -327,24 +323,18 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\CraterLake.jpg" />
     <Content Include="Content\croppedVid.mp4" />
-
     <Content Include="Content\finish.png" />
-
     <Content Include="Content\Deschutes.jpg" />
     <Content Include="Content\HellsCanyon.jpg" />
-
     <Content Include="Content\homepage.css" />
     <Content Include="Content\img1.jpg" />
     <Content Include="Content\img2.jpg" />
     <Content Include="Content\img3.jpg" />
     <Content Include="Content\leaflet-routing-machine.css" />
     <Content Include="Content\leaflet.routing.icons.png" />
-
     <Content Include="Content\marker.png" />
     <Content Include="Content\marker2.png" />
-
     <Content Include="Content\MountHood.jpg" />
-
     <Content Include="Content\navbar.png" />
     <Content Include="Content\route.jpg" />
     <Content Include="Content\routeCreation.png" />
@@ -371,6 +361,7 @@
     <Content Include="Scripts\esm\popper.js" />
     <Content Include="Scripts\esm\popper.min.js" />
     <Content Include="Scripts\EstablishmentDetails.js" />
+    <Content Include="Scripts\EventDetails.js" />
     <Content Include="Scripts\GMaps.js" />
     <Content Include="Scripts\homepage.js" />
     <Content Include="Scripts\HowTo.js" />
@@ -538,14 +529,12 @@
     <Content Include="Views\Profiles\Details.cshtml" />
     <Content Include="Views\Profiles\Edit.cshtml" />
     <Content Include="Views\Profiles\Index.cshtml" />
-
     <Content Include="Views\Events\Create.cshtml" />
     <Content Include="Views\Events\Delete.cshtml" />
     <Content Include="Views\Events\Details.cshtml" />
     <Content Include="Views\Events\Index.cshtml" />
     <Content Include="Views\Routes\Destinations.cshtml" />
     <Content Include="Views\Routes\Events.cshtml" />
-
     <Content Include="Views\Home\Establishment.cshtml" />
     <Content Include="Views\Shared\CreateRouteLayout.cshtml" />
   </ItemGroup>

@@ -8,16 +8,16 @@
 <table border="1">
     <tr>
         <td width="10%">@Html.DisplayNameFor(model => model.eventName)</td>
-        <td width="10%">@Html.DisplayNameFor(model => model.startName)</td>
-        <td width="10%">@Html.DisplayNameFor(model => model.finishName)</td>
+        <td width="10%">@Html.DisplayNameFor(model => model.start)</td>
+        <td width="10%">@Html.DisplayNameFor(model => model.finish)</td>
         <td width="10%">@Html.DisplayNameFor(model => model.route)</td>
     </tr>
     @for (int i = 0; i < Model.size; i++)
     {
         <tr>
             <td width="10%">@Html.DisplayFor(model => model.eventName[i])</td>
-            <td width="10%">@Html.DisplayFor(model => model.startName[i])</td>
-            <td width="10%">@Html.DisplayFor(model => model.finishName[i])</td>
+            <td width="10%">@Html.DisplayFor(model => model.start[i])</td>
+            <td width="10%">@Html.DisplayFor(model => model.finish[i])</td>
             <td width="10%">@Html.DisplayFor(model => model.route[i])</td>
         </tr>
     }
