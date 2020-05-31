@@ -345,6 +345,7 @@
     <Content Include="Scripts\esm\popper.js" />
     <Content Include="Scripts\esm\popper.min.js" />
     <Content Include="Scripts\EstablishmentDetails.js" />
+    <Content Include="Scripts\EventDetails.js" />
     <Content Include="Scripts\GMaps.js" />
     <Content Include="Scripts\homepage.js" />
     <Content Include="Scripts\HowTo.js" />
