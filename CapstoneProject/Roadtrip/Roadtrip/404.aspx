@@ -25,7 +25,7 @@
       text-align: center;
     }
 
-    }
+    
 
     .error-container h1 {
       margin: 100px;

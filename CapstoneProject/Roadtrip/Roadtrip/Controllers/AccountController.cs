@@ -193,7 +193,8 @@ namespace Roadtrip.Controllers
                 profile.Following = "[Following]\n";
                 profile.PendingRequests = "[PendingRequests]\n";
                 profile.RequestsPending = "[RequestsPending]\n";
-                profile.PicLink = "null\n";
+                profile.PicLink = "null";
+                profile.Comments = "[Comments]\n";
                 profileDB.Profiles.Add(profile);
 
                 try

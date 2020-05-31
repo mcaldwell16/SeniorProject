@@ -6,6 +6,16 @@ namespace Roadtrip.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
+    public class PComment
+    {
+        public string ID { get; set; }
+        public string Parent { get; set; }
+        public string Username { get; set; }
+        public string Timestamp { get; set; }
+        public string Content { get; set; }
+        public string Flag { get; set; }
+    }
+
     [Table("Profile")]
     public partial class Profile
     {
@@ -42,12 +52,18 @@ namespace Roadtrip.Models
         [Required]
         public string RequestsPending { get; set; }
 
+        [Required]
+        public string PicLink { get; set; }
+
+        [Required]
+        public string Comments { get; set; }
+
         public List<string> FollowerList { get; set; }
         public List<string> FollowingList { get; set; }
         public List<string> PendingRequestsList { get; set; }
         public List<string> RequestsPendingList { get; set; }
         public List<string> RecentActivityList { get; set; }
-        public string PicLink { get; set; }
+        public List<PComment> CommentsList { get; set; }
 
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

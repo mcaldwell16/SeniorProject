@@ -149,10 +149,18 @@
     padding: 0px;
 }
 
+.profileComment {
+    background-color: lightgreen;
+    width: 50%;
+    margin-left: 25%;
+    border: solid blue 1px;
+    padding: 10px;
+}
+
 .profileBackground {
     text-align: center;
     width: 90%;
-    height: 650px;
+    height: 95%;
     margin-bottom: 35px;
     padding: 10px;
     margin-top: 25px;

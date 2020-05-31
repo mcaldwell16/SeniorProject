@@ -1,4 +1,5 @@
 ﻿@model Roadtrip.Models.Profile
+@using Roadtrip.Models
 
 @{
     ViewBag.Title = Model.UserName + "'s Profile";
@@ -28,167 +29,205 @@
     }
     @if (ViewBag.AccessOK == true)
     {
-        <div class="container profileBackground">
+<div class="container profileBackground">
+    <div class="row">
+        <div class="col-lg-12" style="height:200px;">
+            @{
+                var name = "/Uploads/default.jpg";
+                if (Model.PicLink != "null")
+                {
+                    name = Model.PicLink;
+                }
+                <div style="height: 200px;">
+                    <img src="@name" class="profilepic" />
+                </div>
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3 socialsidebar">
+            @if (Model.UserName != User.Identity.Name && !Model.PendingRequestsList.Contains(User.Identity.Name) && !Model.FollowerList.Contains(User.Identity.Name))
+            {
+                <input name="@Model.UserName" type="button" value="Request Follow" onclick="requestFollow(this.name)">
+            }
+            else if (Model.FollowerList.Contains(User.Identity.Name))
+            {
+                <input name="@Model.UserName" type="button" value="Unfollow" onclick="unfollow(this.name)">
+            }
             <div class="row">
-                <div class="col-lg-12" style="height:100px;">
-                    @{
-                        var name = "/Uploads/default.jpg";
-                        if (Model.PicLink != "null")
+                <div class="col-lg-12 socialsidebar">
+                    Followers
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 socialsidebar">
+                    @if (Model.FollowerList != null)
+                    {
+                        foreach (string s in Model.FollowerList)
                         {
-                            name = Model.PicLink;
+                            string r = "FL1" + @s;
+                            <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left;">
+                                <a id="@r" href="/Profiles/Details/@s"></a>
+                                <script type="text/javascript">
+                                    getImageLink('@r', '@s')
+                                </script>
+                            </div>
                         }
-                        <div style="height: 100px;">
-                            <img src="@name" class="profilepic" />
-                        </div>
                     }
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-3 socialsidebar">
-                    @if (Model.UserName != User.Identity.Name && !Model.PendingRequestsList.Contains(User.Identity.Name) && !Model.FollowerList.Contains(User.Identity.Name))
-                    {
-                        <input name="@Model.UserName" type="button" value="Request Follow" onclick="requestFollow(this.name)">
-                    }
-                    else if (Model.FollowerList.Contains(User.Identity.Name))
-                    {
-                        <input name="@Model.UserName" type="button" value="Unfollow" onclick="unfollow(this.name)">
-                    }
-                    <div class="row">
-                        <div class="col-lg-12 socialsidebar">
-                            Followers
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-12 socialsidebar">
-                            @if (Model.FollowerList != null)
-                            {
-                                foreach (string s in Model.FollowerList)
-                                {
-                                    string r = "FL1" + @s;
-                                    <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left;">
-                                        <a id="@r" href="/Profiles/Details/@s"></a>
-                                        <script type="text/javascript">
-                                    getImageLink('@r', '@s')
-                                        </script>
-                                    </div>
-                                }
-                            }
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-12 socialsidebar">
-                            Following
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-12 socialsidebar">
-                            @if (Model.FollowingList != null)
-                            {
-                                foreach (string s in Model.FollowingList)
-                                {
-                                    string r = "FL2" + @s;
-                                    <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left;">
-                                        <a id="@r" href="/Profiles/Details/@s"></a>
-                                        <script type="text/javascript">
-                                    getImageLink('@r', '@s')
-                                        </script>
-                                    </div>
-                                }
-                            }
-                        </div>
-                    </div>
+                <div class="col-lg-12 socialsidebar">
+                    Following
                 </div>
-                <div class="col-lg-6" style="text-align:center;">
-                    @if (Model.UserName == User.Identity.Name)
+            </div>
+            <div class="row">
+                <div class="col-lg-12 socialsidebar">
+                    @if (Model.FollowingList != null)
                     {
-                        <div class="row">
-                            <div class="col-lg-12 socialsidebar">
-                                <textarea rows="10" style="width:100%" id="AboutMe">@Model.AboutMe</textarea>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <input id="AboutMeButton" style="visibility:hidden;" type="button" value="Save Changes" onclick="updateAboutMe()">
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        @Html.Label("About Me")
-                        <p style="width:100%">@Model.AboutMe</p>
-                    }
-                </div>
-                <div class="col-lg-3" style="text-align:center;">
-                    @if (Model.UserName == User.Identity.Name)
-                    {
-                        if (Model.PrivacyFlag == "Public")
+                        foreach (string s in Model.FollowingList)
                         {
-                            <input name="@Model.UserName" type="button" value="Make profile private" onclick="togglePrivacy(this.name, '@Model.PrivacyFlag.ToString()')">
-                        }
-                        else
-                        {
-                            <input name="@Model.UserName" type="button" value="Make profile public" onclick="togglePrivacy(this.name, '@Model.PrivacyFlag.ToString()')">
-                        }
-                        <div class="row">
-                            <div class="col-lg-12 socialsidebar">
-                                Pending Follower Requests
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-12 socialsidebar">
-                                @if (Model.PendingRequestsList != null)
-                                {
-                                    foreach (string s in Model.PendingRequestsList)
-                                    {
-
-                                        string r = "PR" + @s;
-                                        <div class="row">
-                                            <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left; margin-left: 20%;">
-                                                <a id="@r" href="/Profiles/Details/@s"></a>
-                                                <script type="text/javascript">
-                                                    getImageLink('@r', '@s')
-                                                </script>
-                                            </div>
-
-                                            <div data-toggle="tooltip" data-placement="top" title="Confirm Request" style="margin-left: 20%;">
-                                                <input name="@s" type="button" value="✔" onclick="confirmFollow(this.name)" style="float:left;">
-                                            </div>
-                                            <div data-toggle="tooltip" data-placement="top" title="Deny Request" style="margin-left: 10%;">
-                                                <input name="@s" type="button" value="❌" onclick="denyFollow(this.name)" style="float:left;">
-                                            </div>
-                                            <br />
-                                        </div>
-                                    }
-                                }
-
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-12 socialsidebar">
-                                Requests Pending
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-12 socialsidebar">
-                                @if (Model.RequestsPendingList != null)
-                                {
-                                    foreach (string s in Model.RequestsPendingList)
-                                    {
-                                        string r = "RP" + @s;
-                                        <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left;">
-                                            <a id="@r" href="/Profiles/Details/@s"></a>
-                                            <script type="text/javascript">
+                            string r = "FL2" + @s;
+                            <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left;">
+                                <a id="@r" href="/Profiles/Details/@s"></a>
+                                <script type="text/javascript">
                                     getImageLink('@r', '@s')
-                                            </script>
-                                        </div>
-                                    }
-                                }
+                                </script>
                             </div>
-                        </div>
+                        }
                     }
                 </div>
             </div>
         </div>
+        <div class="col-lg-6" style="text-align:center;">
+            @if (Model.UserName == User.Identity.Name)
+            {
+                <div class="row">
+                    <div class="col-lg-12 socialsidebar">
+                        <textarea rows="10" style="width:100%" id="AboutMe">@Model.AboutMe</textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <input id="AboutMeButton" style="visibility:hidden;" type="button" value="Save Changes" onclick="updateAboutMe()">
+                    </div>
+                </div>
+            }
+            else
+            {
+                @Html.Label("About Me")
+                <p style="width:100%">@Model.AboutMe</p>
+            }
+        </div>
+        <div class="col-lg-3" style="text-align:center;">
+            @if (Model.UserName == User.Identity.Name)
+            {
+                if (Model.PrivacyFlag == "Public")
+                {
+                    <input name="@Model.UserName" type="button" value="Make profile private" onclick="togglePrivacy(this.name, '@Model.PrivacyFlag.ToString()')">
+                }
+                else
+                {
+                    <input name="@Model.UserName" type="button" value="Make profile public" onclick="togglePrivacy(this.name, '@Model.PrivacyFlag.ToString()')">
+                }
+                <div class="row">
+                    <div class="col-lg-12 socialsidebar">
+                        Pending Follower Requests
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 socialsidebar">
+                        @if (Model.PendingRequestsList != null)
+                        {
+                            foreach (string s in Model.PendingRequestsList)
+                            {
+
+                                string r = "PR" + @s;
+                                <div class="row">
+                                    <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left; margin-left: 20%;">
+                                        <a id="@r" href="/Profiles/Details/@s"></a>
+                                        <script type="text/javascript">
+                                                    getImageLink('@r', '@s')
+                                        </script>
+                                    </div>
+
+                                    <div data-toggle="tooltip" data-placement="top" title="Confirm Request" style="margin-left: 20%;">
+                                        <input name="@s" type="button" value="✔" onclick="confirmFollow(this.name)" style="float:left;">
+                                    </div>
+                                    <div data-toggle="tooltip" data-placement="top" title="Deny Request" style="margin-left: 10%;">
+                                        <input name="@s" type="button" value="❌" onclick="denyFollow(this.name)" style="float:left;">
+                                    </div>
+                                    <br />
+                                </div>
+                            }
+                        }
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 socialsidebar">
+                        Requests Pending
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 socialsidebar">
+                        @if (Model.RequestsPendingList != null)
+                        {
+                            foreach (string s in Model.RequestsPendingList)
+                            {
+                                string r = "RP" + @s;
+                                <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left;">
+                                    <a id="@r" href="/Profiles/Details/@s"></a>
+                                    <script type="text/javascript">
+                                    getImageLink('@r', '@s')
+                                    </script>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="row">
+        @if (Model.CommentsList != null)
+        {
+
+            if (User.Identity.Name == Model.UserName || Model.FollowerList.Contains(User.Identity.Name) || Model.PrivacyFlag == "Public")
+            {
+                foreach (PComment c in Model.CommentsList)
+                {
+                    if (c.Flag == "Deleted")
+                    {
+                        <div id="@c.ID" class="profileComment justify-content-center">
+                            <p style="float: left;">[Deleted]</p><div style="float: right;">Posted @c.Timestamp</div><br />
+                            <p id="@c.ID;Content">[Deleted]</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div id="@c.ID" class="profileComment justify-content-center">
+                            <a href="/Profiles/Details/@c.Username" style="float: left;">@c.Username</a><div style="float: right;">Posted @c.Timestamp</div><br />
+                            <p id="@c.ID;Content">@c.Content</p>
+                        </div>
+                        if (User.Identity.Name == c.Username || User.Identity.Name == Model.UserName)
+                        {
+                            <input id="DeleteButton" type="button" value="Delete Comment" onclick="deleteReply('@Model.UserName', '@c.Username', '@c.Timestamp')">
+                        }
+                    }
+
+
+                }
+            }
+        }
+    </div>
+    <div class="row justify-content-center">
+        <textarea rows="5" style="width:100%;" id="ReplyContent"></textarea>
+    </div>
+    <div class="row justify-content-center">
+        <input id="ReplyButton" type="button" value="Submit Reply" onclick="submitReply('@Model.UserName')">
+    </div>
+</div>
     }
     else if (Model.PendingRequestsList.Contains(User.Identity.Name))
     {

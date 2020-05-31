@@ -142,6 +142,41 @@ function updateAboutMe(id) {
     }
 }
 
+function submitReply(id) {
+    if (confirm("Post comment?")) {
+        var text = document.getElementById("ReplyContent").value;
+        var source = '/Profiles/SubmitReply?text=' + text + "&id=" + id;
+
+        $.ajax({
+            url: source,
+            error: function (response) {
+                //sessionStorage.aboutMeAlert = true;
+                location.reload(true);
+
+            },
+            dataType: "json",
+            contentType: 'application/json',
+        });
+    }
+}
+
+function deleteReply(id, un, ts) {
+    if (confirm("Delete comment?")) {
+        var source = '/Profiles/DeleteReply?id=' + id + "&un=" + un + "&ts=" + ts;
+
+        $.ajax({
+            url: source,
+            error: function (response) {
+                //sessionStorage.aboutMeAlert = true;
+                location.reload(true);
+
+            },
+            dataType: "json",
+            contentType: 'application/json',
+        });
+    }
+}
+
 function togglePrivacy(id, privacyFlag) {
 
     var opFlag = "Public";
