@@ -49,12 +49,15 @@ namespace Roadtrip.Controllers
         {
             return View();
         }
-
+        /*Function that gathers the list of Liked Establishments for the logged in user from the database*/
         public ActionResult getLikeEstablishments()
         {
+            /*Calls to a database instance and gathers the list of liked establishments that have the username
+             as the current logged in username*/
             List<LikedEstablishments> le = db.LikedEstablishments
              .Where(s => s.UserName.Contains(User.Identity.Name)).ToList();
 
+            /*Converts the list into a Json object to be sent back to javascript*/
             return new ContentResult
             {
                 // serialize C# object "commits" to JSON using Newtonsoft.Json.JsonConvert
@@ -77,7 +80,7 @@ namespace Roadtrip.Controllers
             {
                 ViewBag.loggedIn = false;
             }
-
+            /*Sends back the liked establishment list to the profile page*/
             List<LikedEstablishments> le = db.LikedEstablishments
              .Where(s => s.UserName.Contains(User.Identity.Name))
              .ToList();
@@ -188,6 +191,8 @@ namespace Roadtrip.Controllers
             List<string> city = new List<string>();
             List<string> state = new List<string>();
             List<string> zipcode = new List<string>();
+            List<string> latitude = new List<string>();
+            List<string> longitude = new List<string>(); 
             //List<string> ids = new List<string>();
 
             name.Add((string)test["name"]);
@@ -198,6 +203,8 @@ namespace Roadtrip.Controllers
             city.Add((string)test["location"]["city"]);
             state.Add((string)test["location"]["state"]);
             zipcode.Add((string)test["location"]["zip_code"]);
+            latitude.Add((string)test["coordinates"]["latitude"]);
+            longitude.Add((string)test["coordinates"]["longitude"]); 
             //ids.Add((string)test["id"]);
 
             var FinalList = new
@@ -210,7 +217,9 @@ namespace Roadtrip.Controllers
                 addresss = address,
                 citys = city,
                 states = state,
-                zipcodes = zipcode
+                zipcodes = zipcode, 
+                latitudes = latitude,
+                longitudes = longitude
             };
             return Json(FinalList, JsonRequestBehavior.AllowGet);
         }
@@ -293,66 +302,7 @@ namespace Roadtrip.Controllers
 
         }
 
-        public ActionResult DisplayInfo(string myInfo, string city)
-        {
-            string request = Request.QueryString["myInfo"];
-            string myCity = Request.QueryString["city"];
-            string myState = Request.QueryString["state"];
-            string myKey = System.Web.Configuration.WebConfigurationManager.AppSettings["OpenCageKey"];
-            string yelpKey = System.Web.Configuration.WebConfigurationManager.AppSettings["YelpKey"]; 
-
-
-            /*Parsing and restructuring the place element*/
-            string[] words = myInfo.Split(' ');
-            string test = words[0];
-            for (int i = 1; i <= words.Length - 1; i++)
-            {
-                test = test + "+" + words[i];
-            }
-            /*Parsing and restructuring the City*/
-
-            string urlPlace = "https://api.opencagedata.com/geocode/v1/json?q=" + test + "+" + myCity + "+" + myState + "&key=" + myKey;
-            //string urlCity = "https://api.opencagedata.com/geocode/v1/json?q=" + myCity + "&key=3e00b526f7af428a93598818cf2e926d";
-            string json = SendRequestToken(urlPlace, myKey);
-            //string jsonCity = SendRequest(urlCity, key); 
-            JObject mapInfo = JObject.Parse(json);
-            // JObject cityInfo = JObject.Parse(jsonCity);
-
-            //[JSON].results.[0].bounds.northeast.lat
-            //[JSON].results.[0].bounds.northeast.lng
-
-            /*YELP SECTION*/
-            string uri = "https://api.yelp.com/v3/businesses/search?location=97361&limit=20";
-            string data = SendRequest(uri, yelpKey);
-
-
-
-
-            //string lat =  [JSON].results.[0].bounds.northeast.lat;
-            //string lon =  [JSON].results.[0].bounds.northeast.lng; 
-            string lat = (string)mapInfo.SelectToken("results.[0].bounds.northeast.lat");
-            string lon = (string)mapInfo.SelectToken("results.[0].bounds.northeast.lng");
-
-            /* string cityLat = (string)cityInfo.SelectToken("results.[0].bounds.northeast.lat");
-             string cityLon = (string)cityInfo.SelectToken("results.[0].bounds.northeast.lng");*/
-
-            MapInfoViewModel updateInfo = new MapInfoViewModel()
-            {
-                Lat = lat,
-                Lon = lon,
-
-            };
-
-
-
-            return new ContentResult
-            {
-
-                Content = JsonConvert.SerializeObject(updateInfo),
-                ContentType = "application/json",
-                ContentEncoding = System.Text.Encoding.UTF8
-            };
-        }
+      
 
         private string SendRequestToken(string uri, string credentials)
         {

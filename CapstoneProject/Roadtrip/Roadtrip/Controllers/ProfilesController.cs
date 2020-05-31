@@ -128,7 +128,11 @@ namespace Roadtrip.Controllers
 
 
             ViewBag.AccessOK = CheckPrivacy(profile, User.Identity.Name);
-
+            SavedRoute sw = db.SavedRoutes.Where(s => s.Username.Contains(id)).FirstOrDefault(r => r.IsCurrent.Equals(1)); 
+            if (sw != null)
+            {
+                ViewBag.Current = sw; 
+            }
 
             return Details(profile);
         }
