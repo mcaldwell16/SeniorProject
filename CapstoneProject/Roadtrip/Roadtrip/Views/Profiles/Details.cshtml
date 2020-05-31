@@ -32,7 +32,6 @@
     {
 <div class="container profileBackground">
     <div class="row">
-<<<<<<< HEAD
         <div class="col-lg-12" style="height:200px;">
             @{
                 var name = "/Uploads/default.jpg";
@@ -42,17 +41,6 @@
                 }
                 <div style="height: 200px;">
                     <img src="@name" class="profilepic" />
-=======
-        <div class="col-lg-12" style="height:100px;">
-            @{
-                var name = "default.jpg";
-                if (File.Exists(Server.MapPath("/Uploads/" + Model.UserName + ".jpeg")))
-                {
-                    name = Model.UserName + ".jpeg";
-                }
-                <div style="height: 100px;">
-                    <img src="~/Uploads/@name" class="profilepic" />
->>>>>>> dev
                 </div>
             }
         </div>
@@ -67,7 +55,6 @@
             {
                 <input name="@Model.UserName" type="button" value="Unfollow" onclick="unfollow(this.name)">
             }
-<<<<<<< HEAD
             <div class="row">
                 <div class="col-lg-12 socialsidebar">
                     Followers
@@ -75,20 +62,10 @@
             </div>
             <div class="row">
                 <div class="col-lg-12 socialsidebar">
-=======
-            <div class="row">
-                <div class="col-lg-12 socialsidebar">
-                    Followers
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12 socialsidebar">
->>>>>>> dev
                     @if (Model.FollowerList != null)
                     {
                         foreach (string s in Model.FollowerList)
                         {
-<<<<<<< HEAD
                             string r = "FL1" + @s;
                             <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left;">
                                 <a id="@r" href="/Profiles/Details/@s"></a>
@@ -96,17 +73,6 @@
                                     getImageLink('@r', '@s')
                                 </script>
                             </div>
-=======
-                            var tname = "default.jpg";
-                            if (File.Exists(Server.MapPath("/Uploads/" + s + ".jpeg")))
-                            {
-                                tname = s + ".jpeg";
-                            }
-                            <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left;">
-                                <a href="/Profiles/Details/@s"><img style="width: 30px; height: 30px; display: block; border: 1px solid black;" src="~/Uploads/@tname" /></a>
-                            </div>
-
->>>>>>> dev
                         }
                     }
                 </div>
@@ -122,7 +88,6 @@
                     {
                         foreach (string s in Model.FollowingList)
                         {
-<<<<<<< HEAD
                             string r = "FL2" + @s;
                             <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left;">
                                 <a id="@r" href="/Profiles/Details/@s"></a>
@@ -218,87 +183,10 @@
                                     getImageLink('@r', '@s')
                                     </script>
                                 </div>
-=======
-                            var tname = "default.jpg";
-                            if (File.Exists(Server.MapPath("/Uploads/" + s + ".jpeg")))
-                            {
-                                tname = s + ".jpeg";
-                            }
-                            <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left;">
-                                <a href="/Profiles/Details/@s"><img style="width: 30px; height: 30px; display: block; border: 1px solid black;" src="~/Uploads/@tname" /></a>
-                            </div>
-
-                        }
-                    }
-                </div>
-            </div>
-
-        </div>
-
-        <div class="col-lg-6" style="text-align:center;">
-            @if (Model.UserName == User.Identity.Name)
-            {
-                <div class="row">
-                    <div class="col-lg-12 socialsidebar">
-                        <textarea rows="10" style="width:100%" id="AboutMe">@Model.AboutMe</textarea>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <input id="AboutMeButton" style="visibility:hidden;" type="button" value="Save Changes" onclick="updateAboutMe()">
-                    </div>
-                </div>
-            }
-            else
-            {
-                @Html.Label("About Me")
-                <p style="width:100%">@Model.AboutMe</p>
-            }
-        </div>
-        <div class="col-lg-3" style="text-align:center;">
-            @if (Model.UserName == User.Identity.Name)
-            {
-                if (Model.PrivacyFlag == "Public")
-                {
-                    <input name="@Model.UserName" type="button" value="Make profile private" onclick="togglePrivacy(this.name, '@Model.PrivacyFlag.ToString()')">
-                }
-                else
-                {
-                    <input name="@Model.UserName" type="button" value="Make profile public" onclick="togglePrivacy(this.name, '@Model.PrivacyFlag.ToString()')">
-                }
-                <div class="row">
-                    <div class="col-lg-12 socialsidebar">
-                        Pending Follower Requests
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12 socialsidebar">
-                        @if (Model.PendingRequestsList != null)
-                        {
-                            foreach (string s in Model.PendingRequestsList)
-                            {
-                                var tname = "default.jpg";
-                                if (File.Exists(Server.MapPath("/Uploads/" + s + ".jpeg")))
-                                {
-                                    tname = s + ".jpeg";
-                                }
-
-                                <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left; margin-left: 15%; margin-right: 20%;">
-                                    <a href="/Profiles/Details/@s"><img style="width: 30px; height: 30px; display: block; border: 1px solid black;" src="~/Uploads/@tname" /></a>
-                                </div>
-                                <div data-toggle="tooltip" data-placement="top" title="Confirm Request">
-                                    <input name="@s" type="button" value="✔" onclick="confirmFollow(this.name)" style="float:left; margin-left: 5%;">
-                                </div>
-                                <div data-toggle="tooltip" data-placement="top" title="Deny Request">
-                                    <input name="@s" type="button" value="❌" onclick="denyFollow(this.name)" style="float:left; margin-left: 5%;">
-                                </div>
-                                <br />
->>>>>>> dev
                             }
                         }
                     </div>
                 </div>
-<<<<<<< HEAD
             }
         </div>
     </div>
@@ -340,40 +228,6 @@
     <div class="row justify-content-center">
         <input id="ReplyButton" type="button" value="Submit Reply" onclick="submitReply('@Model.UserName')">
     </div>
-=======
-                <div class="row">
-                    <div class="col-lg-12 socialsidebar">
-                        Requests Pending
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12 socialsidebar">
-                        @if (Model.RequestsPendingList != null)
-                        {
-                            foreach (string s in Model.RequestsPendingList)
-                            {
-                                var tname = "default.jpg";
-                                if (File.Exists(Server.MapPath("/Uploads/" + s + ".jpeg")))
-                                {
-                                    tname = s + ".jpeg";
-                                }
-                                <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left; margin-left: 5%;">
-                                    <a href="/Profiles/Details/@s"><img style="width: 30px; height: 30px; display: block; border: 1px solid black;" src="~/Uploads/@tname" /></a>
-                                </div>
-                            }
-                        }
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
-    
-    <h3>Current Route</h3>
-    @if (ViewBag.Current != null) {
-        @ViewBag.Current.RouteName <br />
-    @ViewBag.Current.Route
-    }
->>>>>>> dev
 </div>
     }
     else if (Model.PendingRequestsList.Contains(User.Identity.Name))
