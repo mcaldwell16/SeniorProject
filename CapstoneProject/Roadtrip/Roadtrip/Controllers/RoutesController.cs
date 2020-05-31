@@ -171,7 +171,8 @@ namespace Roadtrip.Controllers
 
             return Json(FinalList, JsonRequestBehavior.AllowGet);
         }
-
+        
+        //use yelp api get details from yelp
         public JsonResult GetDetails()
         {
             string ID = Request.QueryString["id"];
@@ -224,6 +225,7 @@ namespace Roadtrip.Controllers
             return Json(FinalList, JsonRequestBehavior.AllowGet);
         }
 
+        //use yelp api get user comments from yelp api
         public JsonResult GetMoreDetails()
         {
             string ID = Request.QueryString["id"];
