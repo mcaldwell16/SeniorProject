@@ -103,6 +103,8 @@ namespace Roadtrip.Controllers
             int id = Convert.ToInt32(Request.QueryString["id"]);
             var test = db2.SavedRoutes.Where(e => e.SRID == id).ToList();
             model.Route = test[0].Route;
+            model.Start = DateTime.Now;
+            model.Finish = DateTime.Now;
             ParseRoute(model);
             return View(model);
         }

@@ -2,8 +2,8 @@
 function eventComments(data) {
     $('#comments').empty();
     console.log(data);
-    if (data == null) {
-        var link = '/Comments/Create/' + data[0].EstablishmentID;
+    if (data[0] == null) {
+        var link = '/Comments/Create/' + data.EstablishmentID;
         $('#createComment').attr("href", link)
     }
     else {
