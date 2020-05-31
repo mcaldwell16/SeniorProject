@@ -177,3 +177,13 @@ textarea {
     to {
         opacity: 1
     }
+}
+
+.commentBox {
+    border-radius: 20px;
+    border: 2px solid #000000;
+    padding: 20px;
+    width: 80%;
+    height: 100px;
+    display: inline;
+}

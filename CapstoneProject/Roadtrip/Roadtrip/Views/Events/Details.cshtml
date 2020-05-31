@@ -2,6 +2,11 @@
 
 @{
     ViewBag.Title = "Details";
+    var eid = ViewBag.EID;
+    <script src="~/Scripts/EventDetails.js"></script>
+    <script>
+            EventComments(@ViewBag.eid);
+    </script>
 }
 
 <h2>Details</h2>
@@ -27,14 +32,6 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Host)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Host)
-        </dd>
-
-        <dt>
             @Html.DisplayNameFor(model => model.Start)
         </dt>
 
@@ -50,25 +47,16 @@
             @Html.DisplayFor(model => model.Finish)
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Attending)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Attending)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Privacy)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Privacy)
-        </dd>
-
     </dl>
 </div>
+
+<div id="comments"></div>
+<a href="Create/Comments/1" id="createComment" target="_blank, width = '400px', height = '400px'">Add Comment</a>
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.EID }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
+
+
+
+@Scripts.Render("~/Scripts/EventDetails.js")

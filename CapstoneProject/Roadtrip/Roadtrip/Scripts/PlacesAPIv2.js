@@ -35,7 +35,7 @@
 
 
 
-function showLikeModal(data) {
+function showLikeModal(data) { 
     console.log(data);
     $('#modaly').empty();
     $('#modaly').append('<ul style="margin-left: -20px; margin-right: 20px; margin-top: 15px;" id="likedEstList"></ul>');
@@ -255,6 +255,7 @@ function errorOnAjax(data) {
     console.log(data);
 }
 
+//function to append all returned establishments to route creation page
 function test(data) {
 
     console.log(data);
@@ -278,6 +279,7 @@ function test(data) {
     }
 }
 
+//returns detail;s of selected establishment
 function details(id) {
     var source = '/Routes/GetDetails?id=' + id;
 
@@ -310,7 +312,7 @@ var btn = document.getElementById("modalButton");
 var span = document.getElementsByClassName("close")[0];
 
 
-// When the user clicks the button, open the modal 
+// When the user clicks the button, open the modal and populate with comments for that establishment 
 function modalComments(data) {
     console.log(data);
     if (data[0] == null) {
@@ -334,7 +336,7 @@ function modalComments(data) {
                 <div>${data[i].Comment1}<div/> 
                 <div/> <br />`)
         }
-        // $('#createComment').attr("href", link)
+        $('#createComment').attr("href", link)
     }
 }
 
