@@ -1,4 +1,5 @@
-﻿$(document).ready(function () {
+﻿//Function for accordion dropdowns on How to page
+$(document).ready(function () {
     var acc = document.getElementsByClassName("accordion");
     var i;
     for (i = 0; i < acc.length; i++) {

@@ -34,6 +34,7 @@ namespace Roadtrip.Controllers
         [HttpGet]
         public ActionResult Index()
         {
+            
             string path = Server.MapPath("~/Uploads/");
             if (System.IO.File.Exists(path + User.Identity.Name + ".jpeg"))
             {
@@ -92,7 +93,7 @@ namespace Roadtrip.Controllers
 
         public JsonResult LoadComments(string id)
         {
-            var comments = db1.Comments.Where(s => s.EstablishmentID == id).ToList();
+            var comments = db1.Comments.Where(s => s.EstablishmentID == id).ToList(); //grabs all comments for one establishment
             Trace.WriteLine(comments);
             if(comments.Count() == 0)
             {
@@ -106,6 +107,20 @@ namespace Roadtrip.Controllers
 
             return Json(comments, JsonRequestBehavior.AllowGet);
         }
+
+        public JsonResult LoadEvents(int id)
+        {
+            //Grabs all events a user is attending
+            var events = from a in db2.Attendant
+                         join e in db2.Events on a.EventID equals e.EID
+                         where a.UserID == id
+                         select new { a.Event.EventName,  a.Event.Start };
+
+            Trace.WriteLine(events);
+
+            return Json(events, JsonRequestBehavior.AllowGet);
+        }
+
 
 
         public JsonResult GetEstablishment()
@@ -291,13 +306,13 @@ namespace Roadtrip.Controllers
 
         private string SendRequestToken(string uri, string credentials)
         {
+            //Sends web request for API information
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
             request.Headers.Add("Authorization", "token " + credentials);
             request.Accept = "application/json";
 
             string jsonString = null;
 
-            // TODO: You should handle exceptions here
             using (WebResponse response = request.GetResponse())
             {
                 Stream stream = response.GetResponseStream();
@@ -337,7 +352,7 @@ namespace Roadtrip.Controllers
 
         public ActionResult Events()
         {
-
+            
             var userName = User.Identity.Name;
             List<Profile> test = db2.Profiles.Where(Profiles => Profiles.UserName == userName).ToList();
             int ChristAlmightyThatTookWayTooLong = test[0].PPID;
@@ -348,7 +363,7 @@ namespace Roadtrip.Controllers
             {
                 return HttpNotFound();
             }
-            EventsViewModel thisUser = new EventsViewModel(profile);
+            EventsViewModel thisUser = new EventsViewModel(profile); //Grabs events that the logged in user is registered to attend
             return View(thisUser);
         }
     }

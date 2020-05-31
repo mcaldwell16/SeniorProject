@@ -296,10 +296,6 @@
     <Content Include="500.aspx" />
     <Content Include="500.html" />
     <Content Include="App_Data\Down.sql" />
-    <Content Include="App_Data\Tester30DB.mdf" />
-    <Content Include="App_Data\Tester30DB_log.ldf">
-      <DependentUpon>Tester30DB.mdf</DependentUpon>
-    </Content>
     <Content Include="App_Data\Up.sql" />
     <Content Include="Content\404.png" />
     <Content Include="Content\500.png" />
@@ -349,6 +345,7 @@
     <Content Include="Scripts\esm\popper.js" />
     <Content Include="Scripts\esm\popper.min.js" />
     <Content Include="Scripts\EstablishmentDetails.js" />
+    <Content Include="Scripts\EventDetails.js" />
     <Content Include="Scripts\GMaps.js" />
     <Content Include="Scripts\homepage.js" />
     <Content Include="Scripts\HowTo.js" />
