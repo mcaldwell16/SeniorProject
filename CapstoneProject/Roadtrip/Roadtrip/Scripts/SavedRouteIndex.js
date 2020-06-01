@@ -10,7 +10,7 @@ $(document).ready(function () {
 function addToIndexList() {
     if (RouteList.length < loadItems)
         loadItems = RouteList.length
-   
+
     for (var i = paginationPosition; i < paginationPosition + loadItems; i++) {
         $('#indexList').append(`
             <div id="${RouteList[i].SRID}" class= "row" style="border-style: solid; border-color: darkslategrey;"> 
@@ -35,9 +35,9 @@ function addToIndexList() {
         }
         /*function that calls to see if the route is present in the current users 
          liked Routes list. Appends like or unlike button depending on result*/
-         mainLike(RouteList[i].SRID, RouteList[i].Username);
+        mainLike(RouteList[i].SRID, RouteList[i].Username);
 
-        console.log(RouteList); 
+        console.log(RouteList);
 
 
 
@@ -46,7 +46,7 @@ function addToIndexList() {
 
         showRoute(i, 'rmap' + i);
     }
-    console.log(RouteList); 
+    console.log(RouteList);
     paginationPosition += loadItems;
 
     if (paginationPosition + loadItems > RouteList.length)
@@ -69,7 +69,7 @@ function toggleOff(e) {
 /*Function that checks if the Route is contained inside of the current users liked list*/
 function mainLike(id, name) {
     var source = '/SavedRoutes/CheckLike?ID=' + id;
-    var my; 
+    var my;
     $.ajax({
         type: 'POST',
         datatype: 'json',
@@ -85,25 +85,25 @@ function mainLike(id, name) {
                 /*If controller function returns false, then the unlike button is appeneded to the list*/
                 returnFalse();
                 console.log("returned false");
-                $(`#${id}`).append(`<input name="${id}" type="button" class="btn btn-primary" value="Unlike" onclick="Unlike(this.name)">`) 
+                $(`#${id}`).append(`<input name="${id}" type="button" class="btn btn-primary" value="Unlike" onclick="Unlike(this.name)">`)
             }
         },
         async: false
 
     });
-    
-    console.log("returned nothing"); 
+
+    console.log("returned nothing");
 }
 function returnTrue() {
-    return 1; 
+    return 1;
 }
 function returnFalse() {
-    return 0; 
+    return 0;
 }
 
 function showRoute(id, divid) {
 
-var mymap = L.map(divid).setView([45, -123], 13);
+    var mymap = L.map(divid).setView([45, -123], 13);
 
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
         maxZoom: 18,
@@ -222,11 +222,11 @@ function like(SRID, userName) {
         contentType: 'application/json',
         traditional: true
     });
-   // location.reload();
+    // location.reload();
 
 }
 function errorOnAjax() {
-    console.log("Error"); 
+    console.log("Error");
 }
 function errorOnAjax1() {
     console.log("Error number 1");
@@ -245,38 +245,38 @@ function Unlike(data) {
             /*Calls the function to reload the list with the proper buttons*/
             tell();
             setTimeout(function () { alert("Unliked Succeeded"); }, 4000);
-           
+
 
         },
         error: errorOnAjax
 
     });
-   
+
 }
 /*Function that reloads the page*/
 function tell() {
     location.reload();
 
     console.log("Unliked Worked");
-    
+
 }
 /*Function that is called when the user sorts the routese by tag on the All Routes page */
 function sortTag() {
     /*Gets the tag that the user chose to sort by */
     var ta = document.getElementById('sortTag');
     var tag = ta.value;
-    console.log(tag); 
-   /*empties the indexList so it can be repopulated with the correct information*/
+    console.log(tag);
+    /*empties the indexList so it can be repopulated with the correct information*/
     $('#indexList').empty();
     /*If the tag is null, the page reloads to grab the original content*/
     if (tag == "null") {
-        location.reload(); 
+        location.reload();
     }
     else {
         /*If it doesn't equal null, it calls the printSortedList function passing 
          along the intended tag to sort by*/
         toggleOff("loadMore");
-        printSortedList(tag); 
+        printSortedList(tag);
     }
 }
 function printEntireList() {
@@ -366,12 +366,12 @@ function searchRoutes(data) {
 /*Function that is called after the Ajax call in searchRoutes returns  */
 function showSearch(data) {
     /*Populates the data into the console. Used for testing */
-    console.log(data); 
+    console.log(data);
     var item = document.getElementById('searchItem');
     var search = item.value;
     /*Empty the Modal so that the new data can be populated*/
     $('#ResultsModal').empty();
-   /*Appends the routes that had the users inputed search found in them*/
+    /*Appends the routes that had the users inputed search found in them*/
     $('#ResultsModal').append('<ul style="margin-left: -20px; margin-right: 20px; margin-top: 15px;" id="SearchedList"></ul>');
     /*Loops through the data and appends the routes to the modal*/
     for (var i = 0; i < data.length; i++) {
@@ -380,7 +380,7 @@ function showSearch(data) {
         <li id="${data[i].routeName}" class="list-group-item list-group-item-dark" class="list-group-item list-group-item-dark" >Name: ${data[i].routeName} <br /> Locations: <br />  </li>`);
         /*Loops through to print out all of the locations stored within the route*/
         for (var j = 0; j < data[i].Locations.length; j++) {
-            $(`#${data[i].routeName}`).append(`${j+1}. ${data[i].Locations[j].Name} <br />`)
+            $(`#${data[i].routeName}`).append(`${j + 1}. ${data[i].Locations[j].Name} <br />`)
         }
     }
 }

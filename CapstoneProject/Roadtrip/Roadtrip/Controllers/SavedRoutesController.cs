@@ -469,7 +469,7 @@ public struct RLocation
         }
         /*Function that takes in the SRID and finds the intended route to be 
          set to current*/
-        public ActionResult SetToCurrent()
+        public void SetToCurrent()
         {
             /*Getting the ID from the query string and casting it to an int*/
             string ID = Request.QueryString["ID"];
@@ -488,8 +488,6 @@ public struct RLocation
             savedRoute.IsCurrent = 1;
             /*Saving the changes in the database*/
             db.SaveChanges();
-            List<SavedRoute> sr = db.SavedRoutes.Where(s => s.Username.Contains(User.Identity.Name)).ToList(); 
-            return Json(true); 
         }
         public ActionResult SaveLikeEstablishment()
         {
