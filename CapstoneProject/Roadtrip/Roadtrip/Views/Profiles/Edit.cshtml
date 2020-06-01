@@ -3,64 +3,40 @@
 @{
     ViewBag.Title = "Edit";
 }
+    <script type="text/javascript">
+    apiKey = '@System.Configuration.ConfigurationManager.AppSettings["ImgurKey"]';
+    </script>
 
-<h2>Edit</h2>
-
-
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Profile</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.PPID)
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+<h2 style="text-align:center;">@User.Identity.Name</h2>
+<body style="background-color: #F5CB5C;">
+    <div class="container profileBackground">
+        <div class="row">
+            <div class="col-lg-12" style="height:200px;">
+                @if (Request.IsAuthenticated)
+                {
+                    var name = "/Uploads/default.jpg";
+                    if (Model.PicLink != "null")
+                    {
+                        name = Model.PicLink;
+                    }
+                    <div style="height: 200px;">
+                        <img src="@name" class="profilepic" />
+                    </div>
+                }
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Friends, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Friends, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Friends, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.AboutMe, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.AboutMe, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.AboutMe, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.PrivacyFlag, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.PrivacyFlag, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.PrivacyFlag, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+        <div class="row">
+            <div class="col-lg-12">
+                <form id="imgur">
+                    <input type="file" class="imgur" accept="image/*" data-max-size="10" />
+                </form>
             </div>
         </div>
     </div>
-}
+    <div id="LikedRoutes" style="width:400px"> </div>
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+</body>
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+@Scripts.Render("~/Scripts/link.js")
+
+

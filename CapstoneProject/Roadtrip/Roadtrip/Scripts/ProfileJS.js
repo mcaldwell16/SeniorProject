@@ -6,6 +6,24 @@
     var t = setInterval(checkAboutMe, 100);
 });
 
+function getImageLink(eid, uid) {
+    var source = '/Profiles/GetImageLink?id=' + uid;
+
+    $.ajax({
+        type: 'GET',
+        datatype: 'json',
+        url: source,
+        success: function (response) {
+            document.getElementById(eid).innerHTML = `<img src="` + response + `" style="width: 30px; height: 30px; display: block; border: 1px solid black;" />`;
+
+        },
+        error: function () {
+
+        },
+        async: false
+    });
+}
+
 function decodeHtml(html) {
     var txt = document.createElement("textarea");
     txt.innerHTML = html;
@@ -117,6 +135,41 @@ function updateAboutMe(id) {
                 //sessionStorage.aboutMeAlert = true;
                 location.reload(true);
                 
+            },
+            dataType: "json",
+            contentType: 'application/json',
+        });
+    }
+}
+
+function submitReply(id) {
+    if (confirm("Post comment?")) {
+        var text = document.getElementById("ReplyContent").value;
+        var source = '/Profiles/SubmitReply?text=' + text + "&id=" + id;
+
+        $.ajax({
+            url: source,
+            error: function (response) {
+                //sessionStorage.aboutMeAlert = true;
+                location.reload(true);
+
+            },
+            dataType: "json",
+            contentType: 'application/json',
+        });
+    }
+}
+
+function deleteReply(id, un, ts) {
+    if (confirm("Delete comment?")) {
+        var source = '/Profiles/DeleteReply?id=' + id + "&un=" + un + "&ts=" + ts;
+
+        $.ajax({
+            url: source,
+            error: function (response) {
+                //sessionStorage.aboutMeAlert = true;
+                location.reload(true);
+
             },
             dataType: "json",
             contentType: 'application/json',

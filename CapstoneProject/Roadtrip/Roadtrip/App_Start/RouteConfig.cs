@@ -74,6 +74,12 @@ namespace Roadtrip
                 defaults: new { controller = "Profiles", action = "TogglePrivacy" }
             );
 
+            routes.MapRoute(
+               name: "SaveImageLink",
+               url: "Profiles/SaveImageLink",
+               defaults: new { controller = "Profiles", action = "SaveImageLink" }
+           );
+
 
             routes.MapRoute(
                 name: "GetEstablishment",

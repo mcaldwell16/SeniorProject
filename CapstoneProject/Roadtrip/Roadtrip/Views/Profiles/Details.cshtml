@@ -1,11 +1,13 @@
 ﻿@model Roadtrip.Models.Profile
+@using Roadtrip.Models
 
 @{
     ViewBag.Title = Model.UserName + "'s Profile";
 }
 
 <script type="text/javascript">
-        origText = "@Model.AboutMe";
+    origText = "@Model.AboutMe";
+    tname = "";
 </script>
 
 @Scripts.Render("~/Scripts/ProfileJS.js")
@@ -30,15 +32,15 @@
     {
 <div class="container profileBackground">
     <div class="row">
-        <div class="col-lg-12" style="height:100px;">
+        <div class="col-lg-12" style="height:200px;">
             @{
-                var name = "default.jpg";
-                if (File.Exists(Server.MapPath("/Uploads/" + Model.UserName + ".jpeg")))
+                var name = "/Uploads/default.jpg";
+                if (Model.PicLink != "null")
                 {
-                    name = Model.UserName + ".jpeg";
+                    name = Model.PicLink;
                 }
-                <div style="height: 100px;">
-                    <img src="~/Uploads/@name" class="profilepic" />
+                <div style="height: 200px;">
+                    <img src="@name" class="profilepic" />
                 </div>
             }
         </div>
@@ -64,15 +66,13 @@
                     {
                         foreach (string s in Model.FollowerList)
                         {
-                            var tname = "default.jpg";
-                            if (File.Exists(Server.MapPath("/Uploads/" + s + ".jpeg")))
-                            {
-                                tname = s + ".jpeg";
-                            }
+                            string r = "FL1" + @s;
                             <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left;">
-                                <a href="/Profiles/Details/@s"><img style="width: 30px; height: 30px; display: block; border: 1px solid black;" src="~/Uploads/@tname" /></a>
+                                <a id="@r" href="/Profiles/Details/@s"></a>
+                                <script type="text/javascript">
+                                    getImageLink('@r', '@s')
+                                </script>
                             </div>
-
                         }
                     }
                 </div>
@@ -88,22 +88,18 @@
                     {
                         foreach (string s in Model.FollowingList)
                         {
-                            var tname = "default.jpg";
-                            if (File.Exists(Server.MapPath("/Uploads/" + s + ".jpeg")))
-                            {
-                                tname = s + ".jpeg";
-                            }
+                            string r = "FL2" + @s;
                             <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left;">
-                                <a href="/Profiles/Details/@s"><img style="width: 30px; height: 30px; display: block; border: 1px solid black;" src="~/Uploads/@tname" /></a>
+                                <a id="@r" href="/Profiles/Details/@s"></a>
+                                <script type="text/javascript">
+                                    getImageLink('@r', '@s')
+                                </script>
                             </div>
-
                         }
                     }
                 </div>
             </div>
-
         </div>
-
         <div class="col-lg-6" style="text-align:center;">
             @if (Model.UserName == User.Identity.Name)
             {
@@ -146,24 +142,27 @@
                         {
                             foreach (string s in Model.PendingRequestsList)
                             {
-                                var tname = "default.jpg";
-                                if (File.Exists(Server.MapPath("/Uploads/" + s + ".jpeg")))
-                                {
-                                    tname = s + ".jpeg";
-                                }
 
-                                <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left; margin-left: 15%; margin-right: 20%;">
-                                    <a href="/Profiles/Details/@s"><img style="width: 30px; height: 30px; display: block; border: 1px solid black;" src="~/Uploads/@tname" /></a>
+                                string r = "PR" + @s;
+                                <div class="row">
+                                    <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left; margin-left: 20%;">
+                                        <a id="@r" href="/Profiles/Details/@s"></a>
+                                        <script type="text/javascript">
+                                                    getImageLink('@r', '@s')
+                                        </script>
+                                    </div>
+
+                                    <div data-toggle="tooltip" data-placement="top" title="Confirm Request" style="margin-left: 20%;">
+                                        <input name="@s" type="button" value="✔" onclick="confirmFollow(this.name)" style="float:left;">
+                                    </div>
+                                    <div data-toggle="tooltip" data-placement="top" title="Deny Request" style="margin-left: 10%;">
+                                        <input name="@s" type="button" value="❌" onclick="denyFollow(this.name)" style="float:left;">
+                                    </div>
+                                    <br />
                                 </div>
-                                <div data-toggle="tooltip" data-placement="top" title="Confirm Request">
-                                    <input name="@s" type="button" value="✔" onclick="confirmFollow(this.name)" style="float:left; margin-left: 5%;">
-                                </div>
-                                <div data-toggle="tooltip" data-placement="top" title="Deny Request">
-                                    <input name="@s" type="button" value="❌" onclick="denyFollow(this.name)" style="float:left; margin-left: 5%;">
-                                </div>
-                                <br />
                             }
                         }
+
                     </div>
                 </div>
                 <div class="row">
@@ -177,13 +176,12 @@
                         {
                             foreach (string s in Model.RequestsPendingList)
                             {
-                                var tname = "default.jpg";
-                                if (File.Exists(Server.MapPath("/Uploads/" + s + ".jpeg")))
-                                {
-                                    tname = s + ".jpeg";
-                                }
-                                <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left; margin-left: 5%;">
-                                    <a href="/Profiles/Details/@s"><img style="width: 30px; height: 30px; display: block; border: 1px solid black;" src="~/Uploads/@tname" /></a>
+                                string r = "RP" + @s;
+                                <div data-toggle="tooltip" data-placement="top" title="@s" style="width: 30px; float: left;">
+                                    <a id="@r" href="/Profiles/Details/@s"></a>
+                                    <script type="text/javascript">
+                                    getImageLink('@r', '@s')
+                                    </script>
                                 </div>
                             }
                         }
@@ -192,12 +190,44 @@
             }
         </div>
     </div>
-    
-    <h3>Current Route</h3>
-    @if (ViewBag.Current != null) {
-        @ViewBag.Current.RouteName <br />
-    @ViewBag.Current.Route
-    }
+    <div class="row">
+        @if (Model.CommentsList != null)
+        {
+
+            if (User.Identity.Name == Model.UserName || Model.FollowerList.Contains(User.Identity.Name) || Model.PrivacyFlag == "Public")
+            {
+                foreach (PComment c in Model.CommentsList)
+                {
+                    if (c.Flag == "Deleted")
+                    {
+                        <div id="@c.ID" class="profileComment justify-content-center">
+                            <p style="float: left;">[Deleted]</p><div style="float: right;">Posted @c.Timestamp</div><br />
+                            <p id="@c.ID;Content">[Deleted]</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div id="@c.ID" class="profileComment justify-content-center">
+                            <a href="/Profiles/Details/@c.Username" style="float: left;">@c.Username</a><div style="float: right;">Posted @c.Timestamp</div><br />
+                            <p id="@c.ID;Content">@c.Content</p>
+                        </div>
+                        if (User.Identity.Name == c.Username || User.Identity.Name == Model.UserName)
+                        {
+                            <input id="DeleteButton" type="button" value="Delete Comment" onclick="deleteReply('@Model.UserName', '@c.Username', '@c.Timestamp')">
+                        }
+                    }
+
+
+                }
+            }
+        }
+    </div>
+    <div class="row justify-content-center">
+        <textarea rows="5" style="width:100%;" id="ReplyContent"></textarea>
+    </div>
+    <div class="row justify-content-center">
+        <input id="ReplyButton" type="button" value="Submit Reply" onclick="submitReply('@Model.UserName')">
+    </div>
 </div>
     }
     else if (Model.PendingRequestsList.Contains(User.Identity.Name))
