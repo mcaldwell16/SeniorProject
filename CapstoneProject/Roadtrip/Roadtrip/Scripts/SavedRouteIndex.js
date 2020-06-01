@@ -13,29 +13,25 @@ function addToIndexList() {
    
     for (var i = paginationPosition; i < paginationPosition + loadItems; i++) {
         $('#indexList').append(`
-            <div id="${RouteList[i].SRID}" class= "row" style="border-style: solid; border-color: darkslategrey;"> <div style='width: 5%; height: 30vh;'>${i + 1}.</div>
-                
+            <div id="${RouteList[i].SRID}" class= "row" style="border-style: solid; border-color: darkslategrey;"> 
+                <div style='width: 5%; height: 30vh;'>${i + 1}.</div>
                 <div id='rmap${i}' style='width: 60%; height:30vh; border-style: solid; border-color: darkseagreen;'></div>
-                <div id="${RouteList[i].routeName}" style='width: 35%; height:30vh; text-align: center; padding-top: 2vh;'><i>By <a href="Profiles/Details/${RouteList[i].Username}">${RouteList[i].Username} </a> <br /> 
-                Route Name: ${RouteList[i].routeName}</i>
-                <br> 
+                <div id="${RouteList[i].SRID}${i}" style='width: 35%; height:30vh; text-align: center; padding-top: 2vh;'><i>By <a href="Profiles/Details/${RouteList[i].Username}">${RouteList[i].Username} </a> <br /> 
+                    Route Name: ${RouteList[i].routeName}</i>
+                    <br> 
 
-                Tags: ${RouteList[i].Tag1}, ${RouteList[i].Tag2} <br /> 
-                Stops: <br /> </div>
+                    Tags: ${RouteList[i].Tag1}, ${RouteList[i].Tag2} <br /> 
+                    Stops: <br /> 
+                </div>
                 <div id="thisID"></div> 
 
                 
                 <br><button type="button" id="Etgm${i}" class="btn btn-primary" onclick="gMapsExport(${i})">Export to Google Maps</button>
-                </div>
-
-                
-               
-
             </div>
             `);
         /*Loops to print out the locations that are inside of the route */
         for (var j = 0; j < RouteList[i].Locations.length; j++) {
-            $(`#${RouteList[i].routeName}`).append(`${j + 1}. ${RouteList[i].Locations[j].Name} <br />`);
+            $(`#${RouteList[i].SRID}${i}`).append(`${j + 1}. ${RouteList[i].Locations[j].Name} <br />`);
         }
         /*function that calls to see if the route is present in the current users 
          liked Routes list. Appends like or unlike button depending on result*/
@@ -60,9 +56,6 @@ function addToIndexList() {
 
     if (loadItems == 0)
         toggleOff("loadMore");
-
-
-    
 }
 
 function toggleOn(e) {
