@@ -305,7 +305,7 @@ function test(data) {
     }
 }
 
-//returns detail;s of selected establishment
+//returns details of selected establishment and uses ajax to show details from yelp
 function details(id) {
     var source = '/Routes/GetDetails?id=' + id;
 
@@ -395,6 +395,7 @@ window.onclick = function (event) {
     var bool = true; 
     */
 
+//use ajax to show user comments from yelp
 function moreDetails(id) {
     var source = '/Routes/GetMoreDetails?id=' + id;
 
@@ -690,7 +691,7 @@ function newA(arr, x) {
     }
     return arr;
 }
-
+//Js object deep copy
 function getType(o) {
     var _t;
     return ((_t = typeof (o)) == "object" ? o == null && "null" || Object.prototype.toString.call(o).slice(8, -1) : _t).toLowerCase();
@@ -715,23 +716,28 @@ function totalR(r) {
     }
     return s;
 }
-
+//ACS algorithem start
 function ACS() {
+    //set up
+    //city amounts
     var cn = selectedLocations.name.length;
+    //ant amounts
     var an = 10;
     var p = 0.7;
     var iter = 1;
     var itermax = 10;
     var dis;
     dis = newA(dis, cn);
+    //The pheromone matrix for each ant
     var Ax;
     Ax = newA(Ax, cn);
+    //The pheromone matrix for each round
     var Rx;
     Rx = newA(Rx, cn);
     var shortdis = 999999999;
     var shortestR = new Array();
     shortestR[0] = new Array();
-
+    //Calculate the distance between two cities
     for (var i = 0; i < cn; i++) {
         for (var j = i + 1; j < cn; j++) {
             var distance = getDistance([selectedLocations.latitude[i], selectedLocations.longitude[i]], [selectedLocations.latitude[j], selectedLocations.longitude[j]]);
@@ -740,7 +746,7 @@ function ACS() {
         }
         dis[i][i] = 0;
     }
-
+    //Calculate the initial pheromone matrix
     for (var i = 0; i < cn; i++) {
         for (var j = i + 1; j < cn; j++) {
             Ax[i][j] = 1 / (cn * (cn - 1));
@@ -750,15 +756,15 @@ function ACS() {
     }
 
     extend(Rx, Ax);
-
+    //outer loop
     while (iter <= itermax) {
-
+        //Record the group's walking path
         var road = new Array();
 
         road[0] = new Array();
 
         road[0][0] = new Array();
-
+        
         for (var k = 0; k < an; k++) {
             road[k] = new Array();
             for (var k5 = 0; k5 < cn; k5++) {
@@ -777,10 +783,11 @@ function ACS() {
 
             }
         }
-
+        //inner loop
         for (var ai = 0; ai < an; ai++) {
             extend(Ax, Rx);
             var route = new Array();
+            //List of cities the ant needs to visit
             for (var j = 0; j < cn; j++) {
                 route[j] = j;
             }
@@ -789,7 +796,7 @@ function ACS() {
 
 
 
-
+            //Go through all the cities at once
             while (totalR(route) != 0) {
 
                 var temp = Ax[pre];
@@ -808,7 +815,7 @@ function ACS() {
                 }
 
 
-
+                //Select the interval with a random number
                 var k = Math.random();
 
                 var ri = 0;
@@ -823,9 +830,9 @@ function ACS() {
 
 
                 road[ai].push([pre, next]);
-
+                //Remove visited cities from the list of cities to visit
                 route[next] = 0;
-
+                //Modify to ensure that next will not be accessed again
                 for (var i = 0; i < cn; i++) {
                     Ax[i][next] = 0;
                 }
@@ -833,7 +840,7 @@ function ACS() {
             }
 
             next = 0;
-
+            //Get rid of the first item you originally added
             road[ai].shift();
 
 
@@ -844,7 +851,7 @@ function ACS() {
         for (var i = 0; i < an; i++) {
             rd[i] = 0;
         }
-
+        //Modify pheromone information according to this round of ant walking, extract the path stored in the road, get the minimum path, and update the relevant pheromone
         for (var i = 0; i < an; i++) {
             for (var j = 0; j < cn - 1; j++) {
 
@@ -865,15 +872,16 @@ function ACS() {
             }
         }
 
-
+        //Guaranteed to be the shortest path so far
         if (shortdis > shorter) {
             shortdis = shorter;
             shortestR = road[temp1];
         }
-
+        //Update the pheromone information of the current shortest path to increase the probability of searching nearby
         for (var i = 0; i < cn - 1; i++) {
             Rx[road[temp1][i][0]][road[temp1][i][1]] = Rx[road[temp1][i][0]][road[temp1][i][1]] * (1 - p) + p * (1 / shorter);
         }
+        //Updates pheromone information that is not on the shortest path
         for (var i = 0; i < cn - 1; i++) {
             for (var j = 0; j < cn - 1; j++) {
                 if (j != road[temp1][i][1]) {
@@ -895,7 +903,7 @@ function ACS() {
         longitude: [],
         id: []
     };
-
+    //Get the process and length of the optimal path and show it in the page
     var text = "";
     var kk = 2;
     for (var i = 0; i < cn - 1; i++) {
