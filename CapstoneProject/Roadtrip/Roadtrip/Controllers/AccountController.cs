@@ -149,7 +149,7 @@ namespace Roadtrip.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    //CheckProfilePage(user.UserName);
+                    CheckProfilePage(user.UserName);
                     var userid = UserManager.FindByEmail(model.Email).Id;
                     if (!UserManager.IsEmailConfirmed(userid))
                     {
