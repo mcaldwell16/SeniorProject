@@ -4,8 +4,9 @@
 
 
 .creditsCol{
-    background-color: aquamarine;
-    border: 2px solid black;
+    background-color: darkslategrey;
+    
+    color: white;
 
 }
 
@@ -179,7 +180,7 @@
 
 body {
     padding-bottom: 20px;
-    background-color: #2f4f4f; /*floralwhite;*/
+    background-color: floralwhite;
 }
 
 /* Set padding to keep content from hitting the edges */
