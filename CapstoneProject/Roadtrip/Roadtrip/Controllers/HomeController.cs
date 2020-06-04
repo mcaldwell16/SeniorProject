@@ -44,6 +44,11 @@ namespace Roadtrip.Controllers
             return View();
         }
 
+        public ActionResult Credits()
+        {
+            return View();
+        }
+
         public JsonResult LoadEvents(int id)
         {
             var events = from a in db2.Attendant
