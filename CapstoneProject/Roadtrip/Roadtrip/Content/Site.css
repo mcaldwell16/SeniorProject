@@ -1,6 +1,14 @@
 ﻿html, body {
     height: 100%;
 }
+
+
+.creditsCol{
+    background-color: aquamarine;
+    border: 2px solid black;
+
+}
+
 .mapoverlay1 {
     width: 88vw;
     height: 10vh;
@@ -171,7 +179,7 @@
 
 body {
     padding-bottom: 20px;
-    background-color: floralwhite;
+    background-color: #2f4f4f; /*floralwhite;*/
 }
 
 /* Set padding to keep content from hitting the edges */

@@ -538,6 +538,7 @@
     <Content Include="Views\Routes\Events.cshtml" />
     <Content Include="Views\Home\Establishment.cshtml" />
     <Content Include="Views\Shared\CreateRouteLayout.cshtml" />
+    <Content Include="Views\Home\Credits.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\SavedRoutes\Create.cshtml" />

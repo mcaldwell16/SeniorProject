@@ -23,7 +23,8 @@ namespace Roadtrip.Controllers
     public class AccountController : Controller
     {
         private SavedRoutesModel db = new SavedRoutesModel();
-        
+        private ProfileContext db2 = new ProfileContext();
+
 
 
         [HttpGet]
@@ -43,8 +44,8 @@ namespace Roadtrip.Controllers
                .Where(s => s.UserName.Contains(User.Identity.Name))
                
                .ToList();
-            
 
+            Profile profile = db2.Profiles.FirstOrDefault(s => s.UserName.Equals(User.Identity.Name));
 
             return View(lr);
         }
