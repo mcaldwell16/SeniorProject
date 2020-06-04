@@ -20,8 +20,6 @@ namespace Roadtrip
             );
 
 
-
-
             routes.MapRoute(
                 name: "UserComments",
                 url: "Comments/Create/{id}",
@@ -76,6 +74,12 @@ namespace Roadtrip
                 defaults: new { controller = "Profiles", action = "TogglePrivacy" }
             );
 
+            routes.MapRoute(
+               name: "SaveImageLink",
+               url: "Profiles/SaveImageLink",
+               defaults: new { controller = "Profiles", action = "SaveImageLink" }
+           );
+
 
             routes.MapRoute(
                 name: "GetEstablishment",
@@ -99,6 +103,18 @@ namespace Roadtrip
                 name: "LoadComments",
                 url: "Routes/LoadComments/{id}",
                 defaults: new { controller = "Routes", action = "LoadComments", id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
+                name: "LoadEvents",
+                url: "Home/LoadEvents/{id}",
+                defaults: new { controller = "Home", action = "LoadEvents", id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
+                name: "LoadCommentsEvents",
+                url: "Events/LoadComments/{id}",
+                defaults: new { controller = "Events", action = "LoadCommentsEvents", id = UrlParameter.Optional }
             );
 
             routes.MapRoute(

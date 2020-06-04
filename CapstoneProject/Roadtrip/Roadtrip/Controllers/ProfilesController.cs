@@ -24,7 +24,42 @@ namespace Roadtrip.Controllers
 
         }
 
+        [Authorize]
+        [HttpGet]
+        public ActionResult Edit()
+        {
+            Profile profile = db.Profiles.FirstOrDefault(s => s.UserName.Equals(User.Identity.Name));
+            return View(profile);
+        }
 
+        [HttpPost]
+        public void SaveImageLink(string id)
+        {
+            Profile profile = db.Profiles.FirstOrDefault(s => s.UserName.Equals(User.Identity.Name));
+            profile.PicLink = id;
+            db.SaveChanges();
+        }
+
+        [HttpGet]
+        public string GetImageLink()
+        {
+            string id = Request.QueryString["id"];
+            Profile profile;
+            if (id == null)
+                profile = db.Profiles.FirstOrDefault(s => s.UserName.Equals(User.Identity.Name));
+            else
+                profile = db.Profiles.FirstOrDefault(s => s.UserName.Equals(id));
+
+            if (profile == null)
+                return "/Uploads/default.jpg";
+
+            if (profile.PicLink == "null")
+                return "/Uploads/default.jpg";
+            else
+                return profile.PicLink;
+        }
+
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Details(Profile profile)
@@ -33,13 +68,16 @@ namespace Roadtrip.Controllers
             return View(profile);
         }
 
+        [Authorize]
         [HttpGet]
         // GET: Profiles/Details/5
         public ActionResult Details(string id)
         {
             if (id == null)
             {
-                return Content("oops, user profile not specified");
+                Response.StatusCode = 404;
+                Response.TrySkipIisCustomErrors = true;
+                return View();
             }
             Profile profile = db.Profiles.FirstOrDefault(s => s.UserName.Equals(id));
 
@@ -76,14 +114,25 @@ namespace Roadtrip.Controllers
                 .ToList();
                 */
 
-            if (profile == null)
+
+            if (profile.Comments != null)
+            {
+                profile.CommentsList = ParseCList(profile.Comments);
+            }
+
+
+                if (profile == null)
             {
                 return Content("oops, looks like this users profile page isn't set up yet.");
             }
 
 
             ViewBag.AccessOK = CheckPrivacy(profile, User.Identity.Name);
-
+            SavedRoute sw = db.SavedRoutes.Where(s => s.Username.Contains(id)).FirstOrDefault(r => r.IsCurrent.Equals(1)); 
+            if (sw != null)
+            {
+                ViewBag.Current = sw; 
+            }
 
             return Details(profile);
         }
@@ -106,6 +155,40 @@ namespace Roadtrip.Controllers
         {
             Profile temp = db.Profiles.FirstOrDefault(s => s.UserName.Equals(User.Identity.Name));
             temp.AboutMe = text;
+            db.SaveChanges();
+        }
+
+        public void DeleteReply(string id, string un, string ts)
+        {
+            Profile profile = db.Profiles.FirstOrDefault(s => s.UserName.Equals(id));
+
+            string comments = profile.Comments;
+
+            string pid = "[UN]" + un + "[UN]" + "[TS]" + ts + "[TS]";
+
+            int location = comments.IndexOf(pid);
+
+            string front = comments.Substring(0, location);
+            string back = comments.Substring(location);
+            back = back.Substring(back.IndexOf("\n") + 1);
+            profile.Comments = (front + back);
+
+            db.SaveChanges();
+        }
+
+        public void SubmitReply(string text, string id)
+        {
+            Profile profile = db.Profiles.FirstOrDefault(s => s.UserName.Equals(id));
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append(profile.Comments);
+            sb.AppendFormat("[UN]" + User.Identity.Name + "[UN]" +
+                "[TS]" + DateTime.Now.ToString() + "[TS]" +
+                "[CO]" + text + "[CO]" +
+                "[PA]" + "None" + "[PA]" +
+                "[FL]" + "None" + "[FL]" + "\n");
+            profile.Comments = sb.ToString();
+
             db.SaveChanges();
         }
 
@@ -269,6 +352,61 @@ namespace Roadtrip.Controllers
             return strings;
         }
 
+        public List<PComment> ParseCList(string s)
+        {
+            List<PComment> comments = new List<PComment>();
+            int start, end;
+            //Split the stored string into an array
+            string[] words = s.Split('\n');
+
+            //Foreach comment-
+            for (int i = 0; i < words.Length - 1; i++)
+            {
+                PComment p = new PComment();
+
+                
+                if (words[i].Contains("[PA]"))
+                {
+                    start = words[i].IndexOf("[PA]");
+                    end = words[i].LastIndexOf("[PA]");
+                    p.Parent = words[i].Substring(start + 4, end - start - 4);
+                }
+
+                if (words[i].Contains("[UN]"))
+                {
+                    start = words[i].IndexOf("[UN]");
+                    end = words[i].LastIndexOf("[UN]");
+                    p.Username = words[i].Substring(start + 4, end - start - 4);
+                }
+
+                if (words[i].Contains("[TS]"))
+                {
+                    start = words[i].IndexOf("[TS]");
+                    end = words[i].LastIndexOf("[TS]");
+                    p.Timestamp = words[i].Substring(start + 4, end - start - 4);
+                }
+
+                if (words[i].Contains("[CO]"))
+                {
+                    start = words[i].IndexOf("[CO]");
+                    end = words[i].LastIndexOf("[CO]");
+                    p.Content = words[i].Substring(start + 4, end - start - 4);
+                }
+
+                if (words[i].Contains("[FL]"))
+                {
+                    start = words[i].IndexOf("[FL]");
+                    end = words[i].LastIndexOf("[FL]");
+                    p.Flag = words[i].Substring(start + 4, end - start - 4);
+                }
+
+                p.ID = p.Username + p.Timestamp;
+
+                comments.Add(p);
+            }
+
+            return comments;
+        }
 
         // GET: Profiles/Create
         public ActionResult Create()
@@ -293,36 +431,7 @@ namespace Roadtrip.Controllers
             return View(profile);
         }
 
-        // GET: Profiles/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Profile profile = db.Profiles.Find(id);
-            if (profile == null)
-            {
-                return HttpNotFound();
-            }
-            return View(profile);
-        }
 
-        // POST: Profiles/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "PPID,UserName,Friends,AboutMe,PrivacyFlag")] Profile profile)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(profile).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(profile);
-        }
 
         // GET: Profiles/Delete/5
         public ActionResult Delete(int? id)

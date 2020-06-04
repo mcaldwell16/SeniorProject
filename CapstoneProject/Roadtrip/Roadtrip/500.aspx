@@ -59,7 +59,7 @@
 <body>
 <div class="error-container">
 <img src="/Content/500.png" style="width: 50%; height: 50%;"/>
-  <h1>500</h1>
+  <p>500 error</p>
   <p class="return">Let's get you out of <a href="/">here</a></p>
 </div>
 

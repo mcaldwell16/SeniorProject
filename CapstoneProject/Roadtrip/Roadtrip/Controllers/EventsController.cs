@@ -26,6 +26,7 @@ namespace Roadtrip.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Index(int? EventID)
         {
+            //Gets the user's id
             var userName = User.Identity.Name;
             List<Profile> test = db2.Profiles.Where(Profiles => Profiles.UserName == userName).ToList();
             int ChristAlmightyThatTookWayTooLong = test[0].PPID;
@@ -33,7 +34,7 @@ namespace Roadtrip.Controllers
             Attendant attendant = new Attendant();
             attendant.EventID = EventID.Value;
             attendant.UserID = ChristAlmightyThatTookWayTooLong;
-            db2.Attendant.Add(attendant);
+            db2.Attendant.Add(attendant); //add user as attendant of event
             db2.SaveChanges();
             return RedirectToAction("Index");
         }
@@ -46,11 +47,53 @@ namespace Roadtrip.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Event @event = db2.Events.Find(id);
+            ViewBag.eid = @event.EID; 
             if (@event == null)
             {
                 return HttpNotFound();
             }
             return View(@event);
+        }
+
+        public JsonResult LoadCommentsEvents(string id)
+        {
+            int x = Int32.Parse(id); //Convert from string to int
+            var comments = db2.Comments.Where(s => s.EstablishmentID == id).ToList(); //Grabs all comments for an event
+            if (comments.Count() == 0)
+            {
+                var model = new
+                {
+                    EstablishmentID = id
+                };
+
+                return Json(model, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json(comments, JsonRequestBehavior.AllowGet);
+        }
+
+        //parses out name from string of name, latitude, longitude and creates string of only names of establishments on the route
+        public void ParseRoute(Event model)
+        {
+            System.Text.StringBuilder routeString = new System.Text.StringBuilder();
+            int start, end;
+
+            //Split the stored string into an array of locations
+            string[] words = model.Route.Split('\n');
+
+            //Foreach location-
+            for (int i = 0; i < words.Length - 1; i++)
+            {
+                start = words[i].IndexOf("[Na]");
+                end = words[i].LastIndexOf("[Na]");
+                routeString.Append(words[i].Substring(start + 4, end - start - 4));
+                if(words.Length - 2 > i)
+                {
+                    routeString.Append("-");
+                }
+            }
+
+            model.Route = routeString.ToString();
         }
 
         // GET: Events/Create
@@ -60,6 +103,9 @@ namespace Roadtrip.Controllers
             int id = Convert.ToInt32(Request.QueryString["id"]);
             var test = db2.SavedRoutes.Where(e => e.SRID == id).ToList();
             model.Route = test[0].Route;
+            model.Start = DateTime.Now;
+            model.Finish = DateTime.Now;
+            ParseRoute(model);
             return View(model);
         }
 

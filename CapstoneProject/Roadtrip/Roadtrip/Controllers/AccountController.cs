@@ -23,7 +23,8 @@ namespace Roadtrip.Controllers
     public class AccountController : Controller
     {
         private SavedRoutesModel db = new SavedRoutesModel();
-        
+        private ProfileContext db2 = new ProfileContext();
+
 
 
         [HttpGet]
@@ -43,11 +44,12 @@ namespace Roadtrip.Controllers
                .Where(s => s.UserName.Contains(User.Identity.Name))
                
                .ToList();
-            
 
+            Profile profile = db2.Profiles.FirstOrDefault(s => s.UserName.Equals(User.Identity.Name));
 
             return View(lr);
         }
+
 
         [HttpPost]
         public ActionResult Edit(HttpPostedFileBase postedFile)
@@ -192,6 +194,8 @@ namespace Roadtrip.Controllers
                 profile.Following = "[Following]\n";
                 profile.PendingRequests = "[PendingRequests]\n";
                 profile.RequestsPending = "[RequestsPending]\n";
+                profile.PicLink = "null";
+                profile.Comments = "[Comments]\n";
                 profileDB.Profiles.Add(profile);
 
                 try
@@ -300,6 +304,7 @@ namespace Roadtrip.Controllers
                     string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     //await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    //send email
                     SendEmail(user, code);
                     AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
 
@@ -331,13 +336,16 @@ namespace Roadtrip.Controllers
         {
             //string code = UserManager.GenerateEmailConfirmationToken(user.Id);
             string codeHtmlVersion = HttpUtility.UrlEncode(code);
+            //send email from where to where
             MailMessage mailMessage = new MailMessage("roadtripwo@gmail.com", user.Email);
             mailMessage.Subject = "Email confirmation";
+            //link to confirmEmail page
             mailMessage.Body = string.Format("<p> Dear {0} <br/> Thank you for your registration, please click on the link to complete your registration: <a href =\"{1}\" title =\"User Email Confirm\">Click Here</a> </p>",
             user.UserName, Url.Action("ConfirmEmail", "Account",
             new { userId = user.Id, Code = codeHtmlVersion }, protocol: Request.Url.Scheme));
 
             SmtpClient smtpClient = new SmtpClient();
+            //use smtp send the mail message
             smtpClient.Send(mailMessage);
         }
         //
@@ -384,6 +392,7 @@ namespace Roadtrip.Controllers
 
                 //var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 //await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                 //use forgotmailsend function to send email 
                  Forgotmailsend(user, code);
                  return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
@@ -396,12 +405,14 @@ namespace Roadtrip.Controllers
         {
             //string code = UserManager.GeneratePasswordResetTokenAsync(user.Id);
             //string codeHtmlVersion = HttpUtility.UrlEncode(code);
+            //set email
             MailMessage mailMessages = new MailMessage("roadtripwo@gmail.com", user.Email);
             mailMessages.Subject = "reset your password";
+            //link to reset password
             mailMessages.Body = string.Format("<p> Dear {0} <br/> If you want to reset password, please click on the link to reset: <a href =\"{1}\" title =\"User Email Confirm\">Click Here</a> </p>",
             user.UserName, Url.Action("ResetPassword", "Account",
             new { userId = user.Id, Code = code }, protocol: Request.Url.Scheme));
-
+            //use smtp service
             SmtpClient smtpClient = new SmtpClient();
             smtpClient.Send(mailMessages);
 

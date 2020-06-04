@@ -3,7 +3,7 @@
     populateRouteList();
  });
 
-
+/*Function that makes an Ajax call to check if a route is already in a liked list*/
 function checkLike(ID, Username) {
 
     var source = '/SavedRoutes/CheckLike?ID=' + ID;
@@ -13,6 +13,7 @@ function checkLike(ID, Username) {
         url: source,
         success: function (response) {
             if (response) {
+                /*If the controller function returns true, the like function is called*/
                 like(ID, Username)
             }
             else {
@@ -23,7 +24,28 @@ function checkLike(ID, Username) {
     });
 
 }
+/*Function that sends the SRID back to controller to be set to the users current route */
+function setToCurrent(data) {
+    var source = '/SavedRoutes/SetToCurrent?ID=' + data;
+    $.ajax({
+        type: 'GET',
+        datatype: 'json',
+        url: source,
+        success: showSucc,
+        error: errorOnAjax
+    });
 
+
+
+
+
+    
+}
+/*Simple function that returns success to the console. Used for testing */
+function showSucc() {
+    console.log("success"); 
+    location.reload(true);
+}
 function populateRouteList() {
     if (RouteList.length > 0)
         $('#routeCol').empty();
@@ -56,6 +78,7 @@ function populateRouteList() {
                 <input id="${RouteList[i].SRID}" type="button" value="Delete Route" onclick="deleteRoute(this.id)">
                  
                 <input id="createEvent" name="${RouteList[i].SRID}" type="button" value="Create Event" onclick="location.href = '/Events/Create?id=${RouteList[i].SRID}';">
+                <input id="${RouteList[i].SRID}" type="button" value="Current" onclick="setToCurrent(this.id)">
 
             </div>
         </div>
@@ -64,29 +87,10 @@ function populateRouteList() {
     }
 
 
-    var iy = tryingWork();
-    if (iy != null) {
-        //console.log(iy);
-        var elem = document.getElementById(iy);
-        console.log(elem); 
-        var topPos = elem.offsetTop;
-
-
-        scrollTo(document.getElementById('routeCol'), topPos - 5, 500);
-
-        highlight(iy, "#ffff00");
-        setTimeout(function () { highlight(iy, "#FEFD1B"); }, 500);
-        setTimeout(function () { highlight(iy, "#FEFA36"); }, 600);
-        setTimeout(function () { highlight(iy, "#FDF851"); }, 700);
-        setTimeout(function () { highlight(iy, "#FDF56C"); }, 800);
-        setTimeout(function () { highlight(iy, "#FCF386"); }, 900);
-        setTimeout(function () { highlight(iy, "#FBF0A1"); }, 1000);
-        setTimeout(function () { highlight(iy, "#FBEEBC"); }, 1100);
-        setTimeout(function () { highlight(iy, "#FAEBD7"); }, 1200);
+   
         
         
-        
-    }
+    
 }
 
 function removeItem(srid) {
@@ -121,11 +125,11 @@ function showRoute(id) {
     var mymap = L.map('rmap').setView([45, -123], 13);
 
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-        maxZoom: 18,
+        maxZoom: 19,
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
             '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
             'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        id: 'mapbox/streets-v11',
+        id: 'mapbox/dark-v10',
         tileSize: 512,
         zoomOffset: -1
     }).addTo(mymap);
@@ -153,11 +157,12 @@ function showRoute(id) {
     mymap.fitBounds(group.getBounds());
 }
 
-
+/*Function that makes an Ajax call to the controller to add a route to the liked list */
 function like(SRID, userName) {
     
     console.log(SRID);
     console.log(userName);
+    /*Builds the URL to go to the correct controller function  */
     var URL = '/SavedRoutes/SaveLike?userName=' + userName + '&SRID=' + SRID;
     $.ajax({
         type: "POST",
@@ -174,45 +179,9 @@ function like(SRID, userName) {
     });
 
 }
+/*Simple function that returns error on AJAX return to the console. Used for testing */
 function errorOnAjax(data) {
     console.log('Error on AJAX return');
     console.log(data);
 }
 
-function tryingWork() {
-    let params = new URLSearchParams(location.search);
-    var my = params.get("ID");
-    
-    return my; 
-}
-function scrollTo(element, to, duration) {
-    console.log(element);
-    var start = element.scrollTop,
-        change = to - start,
-        currentTime = 0,
-        increment = 20;
-
-    var animateScroll = function () {
-        currentTime += increment;
-        var val = Math.easeInOutQuad(currentTime, start, change, duration);
-        element.scrollTop = val;
-        if (currentTime < duration) {
-            setTimeout(animateScroll, increment);
-        }
-    };
-    animateScroll();
-
-}
-
-Math.easeInOutQuad = function (t, b, c, d) {
-    t /= d / 2;
-    if (t < 1) return c / 2 * t * t + b;
-    t--;
-    return -c / 2 * (t * (t - 2) - 1) + b;
-};
-
-function highlight(name, color) {
-    var a = document.getElementById(name);
-    console.log(a);
-    a.style.backgroundColor = color;
-}

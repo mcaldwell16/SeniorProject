@@ -9,10 +9,9 @@
 </script>
 
 @Scripts.Render("~/Scripts/LikedRoutes.js")
-@Scripts.Render("~/Scripts/link.js")
 
 <h2 style="text-align:center;">@User.Identity.Name</h2>
-<body style="background-color: #F5CB5C;">
+<body>
     <div class="container profileBackground">
         <div class="row">
             <div class="col-lg-12" style="height:200px;">
@@ -31,13 +30,9 @@
         </div>
         <div class="row">
             <div class="col-lg-12">
-                @using (Html.BeginForm("Edit", "Account", FormMethod.Post, new { enctype = "multipart/form-data" }))
-                {
-                    <input type="file" name="postedFile" />
-                    <input type="submit" value="Upload" />
-                    <br />
-                    <span style="color:green">@ViewBag.Message</span>
-                }
+                <form id="imgur">
+                    <input type="file" class="imgur" accept="image/*" data-max-size="5000" />
+                </form>
             </div>
         </div>
     </div>
@@ -45,4 +40,5 @@
 
 </body>
 
+@Scripts.Render("~/Scripts/link.js")
 

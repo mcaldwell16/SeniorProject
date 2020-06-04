@@ -81,7 +81,8 @@ CREATE TABLE [dbo].[SavedRoutes]
     [Username]     NVARCHAR (256) NOT NULL,
 	[RouteName]	   NVARCHAR (256) NOT NULL, 
 	[Tag1]		   NVARCHAR (256) NOT NULL, 
-	[Tag2]		   NVARCHAR (256) NOT NULL 
+	[Tag2]		   NVARCHAR (256) NOT NULL,
+	[IsCurrent]    INT NOT NULL 
     CONSTRAINT [PK_dbo.SavedRoutes] PRIMARY KEY CLUSTERED ([SRID] ASC)
 );
 GO
@@ -116,6 +117,8 @@ CREATE TABLE [dbo].[Profile]
 [Following] varchar(MAX) NOT NULL,
 [PendingRequests] varchar(MAX) NOT NULL,
 [RequestsPending] varchar(MAX) NOT NULL,
+[PicLink] varchar(50) NOT NULL,
+[Comments] varchar(MAX) NOT NULL,
 CONSTRAINT [PK_dbo.Profile] PRIMARY KEY CLUSTERED ([PPID] ASC)
 );
 

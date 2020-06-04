@@ -78,7 +78,8 @@ public struct RLocation
             savedRoute.Route = sb.ToString();
             savedRoute.RouteName = Rname;
             savedRoute.Tag1 = tag1;
-            savedRoute.Tag2 = tag2; 
+            savedRoute.Tag2 = tag2;
+            savedRoute.IsCurrent = 0; 
 
             db.SavedRoutes.Add(savedRoute);
             
@@ -346,14 +347,16 @@ public struct RLocation
             }
             base.Dispose(disposing);
         }
-
+        /*Function that unlikes a specific route*/
         public ActionResult Unlike()
         {
+            /*Gets the ROute ID from the query string and changes it to an int*/
             string ID1 = Request.QueryString["ID"];
             int ID = Int32.Parse(ID1);
             /* List<LikedRoute> sr = db.LikedRoute
                 .Where(s => s.LRID.Equals(ID))
                 .ToList();*/
+                /*Gathers the current users liked route list*/
             List<LikedRoute> sr = db.LikedRoute
            .Where(s => s.UserName.Contains(User.Identity.Name))
 
@@ -364,27 +367,34 @@ public struct RLocation
                 db.LikedRoute.Remove(s);
                 db.SaveChanges();
             }*/
+            /*Loops through to find the Route to be removed from the liked list*/
             for (int i = 0; i < sr.Count; i++)
             {
                 if (ID == sr[i].RouteID)
                 {
+                    /*When the route is found, the element is removed from the list
+                     and the changes are saved*/
                     db.LikedRoute.Remove(sr[i]);
                     db.SaveChanges(); 
                 }
             }
             return Json(true); 
         }
+        /*Function that unlikes a specific establishment*/
         public ActionResult UnlikeEst()
         {
+            /*Gets the Establishment ID from the Query string*/
             string ID = Request.QueryString["ID"];
-
+            /*Gathers the Liked Establishment list for the current user*/
             List<LikedEstablishments> le = db.LikedEstablishments
                 .Where(s => s.UserName.Contains(User.Identity.Name)).ToList();
-
+            /*Loops through to find the specified Establishment to be deleted*/
             for (int i = 0; i < le.Count; i++)
             {
                 if (ID == le[i].EstablishmentID)
                 {
+                    /*When the ID matches, the item is removed from the database
+                     and the changes are saved.*/
                     db.LikedEstablishments.Remove(le[i]);
                     db.SaveChanges(); 
                 }
@@ -392,78 +402,118 @@ public struct RLocation
 
             return Json(true); 
         }
-
+        /*Function that adds the Route to the users save list*/
         public ActionResult SaveLike()
         {
+            /*Get the username and the SRID from the query string*/
             string userName = Request.QueryString["userName"];
             string SRID = Request.QueryString["SRID"];
+            /*Changing the SRID to an int*/
             int realSRID = Int32.Parse(SRID);
+            /*Create an instance of a new LikedRoute*/
             LikedRoute likeRoute = new LikedRoute();
+            /*Populates the fields of the new LikedRoute*/
             likeRoute.RouteID = realSRID;
             likeRoute.UserName = User.Identity.Name;
-
+            /*Adds the new instance of the likedRoute and saves the changes in the database*/
             db.LikedRoute.Add(likeRoute);
             
             db.SaveChanges();
 
             return Json(true);
         }
-
+        /*Functiin that checks to see if the intended liked route is inside of the 
+         current users list*/
         public ActionResult CheckLike()
         {
+            /*Getting the Route ID from the query string and converting to an int*/
             string ID1 = Request.QueryString["ID"];
             int ID = Int32.Parse(ID1); 
-
+            /*Gets a list of the current users liked routes list*/
             List<LikedRoute> lr = db.LikedRoute
               .Where(s => s.UserName.Contains(User.Identity.Name))
 
               .ToList();
-
+            /*Loops through the list to check if the ID matches any of the RouteIDs*/
             for (int i = 0; i < lr.Count; i++)
             {
                 if (ID == lr[i].RouteID)
                 {
+                    /*If any of the IDs match, function returns false*/
                     return Json(false); 
                 }
             }
+            /*If it doesn't match, function returns true*/
             return Json(true); 
         }
+        /*Function that checks to see if the Establishment is already in the users liked list*/
         public ActionResult CheckLikeEstablishment()
         {
+            /*Getting the Establishment ID that is sent from the query string*/
             string ID = Request.QueryString["ID"];
+            /*Getting the liked list from the current user into a list*/
             List<LikedEstablishments> le = db.LikedEstablishments.Where(s => s.UserName
             .Contains(User.Identity.Name)).ToList(); 
-                
+                /*Loops through each item of the list and checks to see if the Establishment ID is saved in any
+                 of the database entry*/
             for (int i = 0; i < le.Count; i++)
             {
                 if (ID == le[i].EstablishmentID)
                 {
+                    /*If the ID is contained anywhere in the database, function returns false*/
                     return Json(false); 
                 }
             }
-
+            /*If it is not contained, function returns true*/
             return Json(true); 
         }
-
+        /*Function that takes in the SRID and finds the intended route to be 
+         set to current*/
+        public void SetToCurrent()
+        {
+            /*Getting the ID from the query string and casting it to an int*/
+            string ID = Request.QueryString["ID"];
+            int SRID = Int32.Parse(ID);
+            /*Chacking to make sure there arent any other routes that are set to the current*/
+            SavedRoute sa = db.SavedRoutes.Where(s => s.Username.Contains(User.Identity.Name)).FirstOrDefault(s => s.IsCurrent.Equals(1));
+            if (sa != null)
+            {
+                sa.IsCurrent = 0;
+            }
+            db.SaveChanges(); 
+            /*Finding the Route that matches with the SRID*/
+            
+            SavedRoute savedRoute = db.SavedRoutes.Where(s => s.Username.Contains(User.Identity.Name)).FirstOrDefault(r => r.SRID.Equals(SRID)); 
+            /*Setting the Route to current*/
+            savedRoute.IsCurrent = 1;
+            /*Saving the changes in the database*/
+            db.SaveChanges();
+        }
         public ActionResult SaveLikeEstablishment()
         {
+            /*Getting the ID from the Query string*/
             string ESTID = Request.QueryString["ID"];
-           
+           /*Getting the Establishment name from the Query string*/
             string ESTName = Request.QueryString["ID2"];
+            /*Creating a new instance of a liked establishment*/
             LikedEstablishments likedEstablishments = new LikedEstablishments();
+            /*filling the fields in the likedEstablishment to the proper values*/
             likedEstablishments.EstablishmentID = ESTID;
             likedEstablishments.EstablishmentName = ESTName;
             likedEstablishments.UserName = User.Identity.Name;
-
+            /*Adding the liked Establishment insatnce to the database and saving it*/
             db.LikedEstablishments.Add(likedEstablishments);
             db.SaveChanges(); 
             return Json(true); 
         }
+        /*Function that searches for a specific place within the routes*/
         public ActionResult SearchSaved()
         {
-
+            /*Getting the key word to search for from the query string*/
             string ID = Request.QueryString["ID"];
+            /*Gets a list of the routes that contain the certian key word*/
             List<SavedRoute> sr = db.SavedRoutes.Where(s => s.Route.Contains(ID)).ToList();
+            /*Converting the list into a Json object to be sent back to the javascript function*/
             return new ContentResult
             {
                 // serialize C# object "commits" to JSON using Newtonsoft.Json.JsonConvert
